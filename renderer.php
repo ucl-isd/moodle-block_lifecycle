@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/blocks/lifecycle/lib.php');
+use block_lifecycle\manager;
 
 /**
  * Class block_lifecycle_renderer
@@ -34,8 +32,8 @@ class block_lifecycle_renderer extends plugin_renderer_base {
      */
     public function fetch_block_content(): string {
         $content = html_writer::start_div('lifecycle');
-        $content .= html_writer::div(block_lifecycle_get_course_lifecycle_info());
-        $content .= html_writer::div(block_lifecycle_get_context_freezing_data());
+        $content .= html_writer::div(manager::get_course_lifecycle_info());
+        $content .= html_writer::div(manager::get_context_freezing_data());
         $content .= html_writer::end_div();
 
         return $content;
