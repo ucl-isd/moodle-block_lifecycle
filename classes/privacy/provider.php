@@ -14,29 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace block_lifecycle\privacy;
+
 /**
- * Global library functions for block_lifecycle
+ * Data provider class.
  *
  * @package    block_lifecycle
  * @copyright  2022 onwards University College London {@link https://www.ucl.ac.uk/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
+class provider implements \core_privacy\local\metadata\null_provider {
 
-/**
- * Returns the context freezing data.
- *
- * @return string
- */
-function block_lifecycle_get_context_freezing_data(): string {
-    return 'Context freezing settings';
-}
-
-/**
- * Returns the course lifecycle information.
- *
- * @return string
- */
-function block_lifecycle_get_course_lifecycle_info(): string {
-    return '2022-23';
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
 }

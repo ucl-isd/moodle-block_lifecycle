@@ -68,4 +68,13 @@ class block_lifecycle extends block_base {
 
         return $this->content;
     }
+
+    /**
+     * Allow the block to have a configuration page.
+     *
+     * @return boolean
+     */
+    public function has_config() {
+        return true;
+    }
 }
