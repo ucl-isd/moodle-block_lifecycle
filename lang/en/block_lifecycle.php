@@ -33,8 +33,11 @@ $string['lifecycle:view'] = 'View lifecycle block';
 $string['privacy:metadata'] = 'The Lifecycle block does not store personal data';
 $string['settings:clcfield'] = 'CLC Field';
 $string['settings:clcfield:desc'] = 'The CLC course custom field used to find potential academic years';
+$string['settings:enablescheduledtask'] = 'Enable Scheduled task';
+$string['settings:enablescheduledtask:desc'] = 'Enable the scheduled task for auto context freezing';
 $string['settings:latesummerassessment:end'] = '{$a} LSA End Date';
 $string['settings:latesummerassessment:end:desc'] = 'End date of {$a} late summer assessment';
 $string['settings:weeksdelay'] = 'Weeks Delay';
 $string['settings:weeksdelay:desc'] = 'The number of weeks after course end date to delay context freezing';
+$string['task:freezecontext'] = 'Task to freeze course context';
 

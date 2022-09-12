@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version file for block_lifecycle
+ * Task definition for freezing course context
  *
  * @package    block_lifecycle
  * @copyright  2022 onwards University College London {@link https://www.ucl.ac.uk/}
@@ -25,8 +25,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022090900;
-$plugin->release   = '0.1';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->requires  = 2020061512;
-$plugin->component = 'block_lifecycle';
+$tasks = array(
+    array(
+        'classname' => '\block_lifecycle\task\freezecontext',
+        'blocking' => 0,
+        'minute' => 0,
+        'hour' => 0,
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 0
+    )
+);
+

@@ -16,6 +16,8 @@
 
 namespace block_lifecycle;
 
+use context_course;
+
 /**
  * Global library functions for block_lifecycle
  *
@@ -89,5 +91,106 @@ class manager {
             WHERE cc.name = 'CLC' AND cf.type = 'text'";
 
         return $DB->get_records_sql($sql);
+    }
+
+    /**
+     * Get courses for context freezing.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function get_courses_for_context_freezing(): array {
+        global $DB;
+
+        $eligiblecourses = array();
+
+        // Get weeks delay for context freezing.
+        $weeksdelay = get_config('block_lifecycle', 'weeks_delay');
+
+        $enddateextend = 0;
+        if ($weeksdelay > 0) {
+            // Course end date extend by seconds.
+            $enddateextend = $weeksdelay * 604800;
+        }
+
+        $sql = "SELECT c.id, c.fullname, c.enddate
+                FROM {course} c JOIN {context} ctx ON c.id = ctx.instanceid
+                WHERE c.id <> :siteid AND ctx.contextlevel = 50 AND ctx.locked = 0
+                AND c.enddate <> 0 AND (c.enddate + :enddateextend) < :currenttime";
+
+        $potentialcourses = $DB->get_records_sql($sql,
+            array('siteid' => SITEID, 'enddateextend' => $enddateextend, 'currenttime' => time()));
+
+        if (!empty($potentialcourses)) {
+            foreach ($potentialcourses as $course) {
+                if (self::check_course_is_eligible_for_context_freezing($course)) {
+                    $eligiblecourses[] = $course;
+                }
+            }
+        }
+
+        return $eligiblecourses;
+    }
+
+    /**
+     * Freeze course context.
+     *
+     * @param int $courseid
+     * @return void
+     * @throws \coding_exception
+     */
+    public static function freeze_course(int $courseid) {
+        $context = context_course::instance($courseid);
+        $parentcontext = $context->get_parent_context();
+        if ($parentcontext && !empty($parentcontext->locked)) {
+            // Can't make changes to a context whose parent is locked.
+            throw new \coding_exception('Parent context is locked. Course ID: ' . $courseid);
+        }
+
+        // Lock the course context.
+        $context->set_locked(true);
+    }
+
+    /**
+     * Check course is eligible for context freezing.
+     *
+     * @param \stdClass $course
+     * @return bool
+     * @throws \dml_exception
+     */
+    private static function check_course_is_eligible_for_context_freezing(\stdClass $course): bool {
+        // Check if the course has clc academic year set.
+        if (!$academicyear = self::get_course_clc_academic_year($course->id)) {
+            return false;
+        }
+
+        // Get configured late summer assessment end date.
+        $lsaenddate = strtotime(get_config('block_lifecycle', 'late_summer_assessment_end_' . $academicyear));
+
+        // The LSA end date must be passed.
+        if (time() < $lsaenddate) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get CLC course academic year.
+     *
+     * @param int $courseid
+     * @return mixed|null
+     */
+    private static function get_course_clc_academic_year(int $courseid) {
+        $academicyear = null;
+        $handler = \core_course\customfield\course_handler::create();
+        $data = $handler->get_instance_data($courseid, true);
+        foreach ($data as $dta) {
+            if ($dta->get_field()->get('shortname') === self::CLC_ACADEMIC_YEAR_FIELD) {
+                $academicyear = !empty($dta->get_value()) ? $dta->get_value() : null;
+            }
+        }
+
+        return $academicyear;
     }
 }
