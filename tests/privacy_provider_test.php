@@ -14,19 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace block_lifecycle;
+
+use block_lifecycle\privacy\provider;
+
 /**
- * Version file for block_lifecycle
+ * Unit tests for block_lifecycle's privacy provider class.
  *
  * @package    block_lifecycle
  * @copyright  2022 onwards University College London {@link https://www.ucl.ac.uk/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
+class privacy_provider_test extends \advanced_testcase {
+    protected function setUp(): void {
+        parent::setUp();
+        $this->resetAfterTest();
+    }
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2022090900;
-$plugin->release   = '0.1';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->requires  = 2020061512;
-$plugin->component = 'block_lifecycle';
+    /**
+     * Test get_reason.
+     *
+     * @covers \block_lifecycle\privacy\provider::get_reason()
+     * @return void
+     * @throws \coding_exception
+     */
+    public function test_get_reason() {
+        $reason = get_string(provider::get_reason(), 'block_lifecycle');
+        $this->assertEquals('The Lifecycle block does not store personal data', $reason);
+    }
+}

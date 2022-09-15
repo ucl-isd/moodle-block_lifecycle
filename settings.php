@@ -59,6 +59,16 @@ if ($ADMIN->fulltree) {
         get_string('settings:clcfield', 'block_lifecycle'),
         get_string('settings:clcfield:desc', 'block_lifecycle'), '', $options));
 
+    // Setting to enable/disable the scheduled task for auto context freezing.
+    $settings->add(new admin_setting_configcheckbox(
+        'block_lifecycle/enabled_scheduled_task',
+        get_string('settings:enablescheduledtask', 'block_lifecycle'),
+        get_string('settings:enablescheduledtask:desc', 'block_lifecycle'),
+        false,
+        true,
+        false
+    ));
+
     // Generate settings based on possible academic years.
     if ($potentialacademicyears = manager::get_potential_academic_years()) {
         foreach ($potentialacademicyears as $year) {
