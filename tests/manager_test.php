@@ -42,10 +42,10 @@ class manager_test extends \advanced_testcase {
         $this->field1 = $dg->create_custom_field(['categoryid' => $catid, 'type' => 'text', 'shortname' => 'course_year']);
         $this->field2 = $dg->create_custom_field(['categoryid' => $catid, 'type' => 'text', 'shortname' => 'new_field']);
 
-        // Create default course.
-        $dg->create_course(['customfield_course_year' => '2020']);
-        $dg->create_course(['customfield_course_year' => '2021']);
-        $dg->create_course(['customfield_course_year' => '2022']);
+        // Create default courses.
+        $this->course1 = $dg->create_course(['customfield_course_year' => '2020']);
+        $this->course2 = $dg->create_course(['customfield_course_year' => '2021']);
+        $this->course3 = $dg->create_course(['customfield_course_year' => '2022']);
     }
 
     /**
@@ -209,6 +209,80 @@ class manager_test extends \advanced_testcase {
             $mockedinstance, [$course->id]
         );
         $this->assertNull($academicyear);
+    }
+
+    /**
+     * Test get_course_lifecycle_info.
+     *
+     * @covers \block_lifecycle\manager::get_course_lifecycle_info()
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function test_get_course_lifecycle_info() {
+        // Test course academic year is 2020.
+        $result = manager::get_course_lifecycle_info($this->course1->id);
+        $this->assertEquals(array('class' => '', 'text' => 'Moodle 2020/21'), $result);
+
+        // Test course academic year is current academic year.
+        $result = manager::get_course_lifecycle_info($this->course3->id);
+        $this->assertEquals(array('class' => 'current', 'text' => 'Moodle 2022/23'), $result);
+    }
+
+    /**
+     * Test should_show_clc_info().
+     *
+     * @covers \block_lifecycle\manager::should_show_clc_info()
+     * @return void
+     * @throws \dml_exception
+     * @throws coding_exception
+     */
+    public function test_should_show_clc_info() {
+        $dg = $this->getDataGenerator();
+        // Create courses.
+        // Start date 2021-09-01.
+        $course1 = $dg->create_course(['customfield_course_year' => '2021',
+            'startdate' => 1630450800]);
+        // Start date 2022-09-01, end date current time plus one week.
+        $course2 = $dg->create_course(['customfield_course_year' => '2022',
+            'startdate' => 1661986800, 'enddate' => strtotime('+1 week')]);
+        // Start date 2021-09-01, end date 2022-06-30.
+        $course3 = $dg->create_course(['customfield_course_year' => '2021',
+            'startdate' => 1630450800, 'enddate' => 1656543600]);
+
+        // Test course no end date.
+        $result = manager::should_show_clc_info($course1->id);
+        $this->assertFalse($result);
+
+        // Test current time within course start date and end date.
+        $result = manager::should_show_clc_info($course2->id);
+        $this->assertFalse($result);
+
+        // Test teacher can see the info.
+        $teacherroleid = $dg->create_role(
+            array('shortname' => 'test_teacher',
+                'name' => 'test_teacher',
+                'description' => 'test teacher role',
+                'archetype' => 'editingteacher'));
+        $user1 = $dg->create_user();
+        $dg->enrol_user($user1->id, $course3->id, $teacherroleid);
+        $this->setUser($user1->id);
+
+        $result = manager::should_show_clc_info($course3->id);
+        $this->assertTrue($result);
+
+        // Test student role cannot see the info.
+        $studentroleid = $dg->create_role(
+            array('shortname' => 'test_student',
+                'name' => 'test_student',
+                'description' => 'student role',
+                'archetype' => 'student'));
+
+        $user2 = $dg->create_user();
+        $dg->enrol_user($user2->id, $course3->id, $studentroleid);
+        $this->setUser($user2->id);
+
+        $result = manager::should_show_clc_info($course3->id);
+        $this->assertFalse($result);
     }
 }
 

@@ -32,9 +32,26 @@ class block_lifecycle_renderer extends plugin_renderer_base {
      */
     public function fetch_block_content(): string {
         $content = html_writer::start_div('lifecycle');
-        $content .= html_writer::div(manager::get_course_lifecycle_info());
         $content .= html_writer::div(manager::get_context_freezing_data());
         $content .= html_writer::end_div();
+
+        return $content;
+    }
+
+    /**
+     * Returns the html for clc info.
+     *
+     * @param int $courseid
+     * @return string
+     * @throws dml_exception
+     */
+    public function fetch_clc_content(int $courseid) {
+        $content = '';
+        if ($info = manager::get_course_lifecycle_info($courseid)) {
+            $content = html_writer::start_div('clc_info ' . $info['class']);
+            $content .= html_writer::div($info['text']);
+            $content .= html_writer::end_div();
+        }
 
         return $content;
     }
