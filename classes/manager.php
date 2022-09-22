@@ -42,10 +42,25 @@ class manager {
     /**
      * Returns the course lifecycle information.
      *
-     * @return string
+     * @param int $courseid
+     * @return array|string
+     * @throws \dml_exception
      */
-    public static function get_course_lifecycle_info(): string {
-        return '2022-23';
+    public static function get_course_lifecycle_info(int $courseid) {
+        $result = '';
+        $currentcourseacademicyear = self::get_course_clc_academic_year($courseid);
+        $academicyears = self::get_potential_academic_years();
+
+        if (!empty($currentcourseacademicyear) && !empty($academicyears)) {
+            $class = '';
+            if ($currentcourseacademicyear == array_keys($academicyears)[0]) {
+                $class = 'current';
+            }
+            $text = 'Moodle ' . $currentcourseacademicyear . '/' . ((int) substr($currentcourseacademicyear, -2) + 1);
+            $result = array('class' => $class, 'text' => $text);
+        }
+
+        return $result;
     }
 
     /**
@@ -149,6 +164,35 @@ class manager {
 
         // Lock the course context.
         $context->set_locked(true);
+    }
+
+    /**
+     * Check should the clc info be shown.
+     *
+     * @param int $courseid
+     * @return bool
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function should_show_clc_info(int $courseid): bool {
+        $coursecontext = context_course::instance($courseid);
+        $course = get_course($courseid);
+        // Course has no enddate.
+        if (empty($course->enddate)) {
+            return false;
+        }
+
+        // Course has started and haven't ended.
+        if (time() > $course->startdate && time() < $course->enddate) {
+            return false;
+        }
+
+        // Check user's permission.
+        if (!has_capability('block/lifecycle:view', $coursecontext)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

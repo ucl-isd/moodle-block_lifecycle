@@ -1,0 +1,12 @@
+.block_lifecycle div.clc_info {
+    background-color: purple;
+    text-align: center;
+    font-size: xx-large;
+    color: white;
+    font-weight: bold;
+    padding: 5px 0 5px 0;
+}
+
+.block_lifecycle div.clc_info.current {
+    background-color: orange;
+}
