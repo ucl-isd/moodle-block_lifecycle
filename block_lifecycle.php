@@ -13,8 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-use block_lifecycle\manager;
 
+use block_lifecycle\manager;
 /**
  * Class block_lifecycle
  *
@@ -50,10 +50,6 @@ class block_lifecycle extends block_base {
     public function get_content() {
         $courseid = $this->page->course->id;
 
-        if (!manager::should_show_clc_info($courseid)) {
-            return null;
-        }
-
         if ($this->content !== null) {
             return $this->content;
         }
@@ -63,11 +59,21 @@ class block_lifecycle extends block_base {
             return $this->content;
         }
 
+        // Load javascript.
+        $this->page->requires->js_call_amd('block_lifecycle/lifecycle', 'init', [$courseid]);
+
         $this->content = new stdClass();
         $this->content->footer = '';
-
         $renderer = $this->page->get_renderer('block_lifecycle');
-        $html = $renderer->fetch_clc_content($courseid);
+
+        $html = '';
+        if (manager::should_show_ay_label($courseid)) {
+            $html .= $renderer->fetch_clc_content($courseid);
+        }
+        if (manager::should_show_auto_freezing_preferences($courseid)) {
+            $html .= $renderer->fetch_block_content($courseid);
+        }
+
         $this->content->text = $html;
 
         return $this->content;

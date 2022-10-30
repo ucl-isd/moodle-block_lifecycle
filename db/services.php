@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version file for block_lifecycle
+ * Web services for block_lifecycle.
  *
  * @package    block_lifecycle
  * @copyright  2022 onwards University College London {@link https://www.ucl.ac.uk/}
@@ -25,8 +25,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022103001;
-$plugin->release   = '0.1';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->requires  = 2020061512;
-$plugin->component = 'block_lifecycle';
+// We defined the web service functions to install.
+$functions = array(
+    'block_lifecycle_update_auto_freezing_preferences' => array(
+        'classname' => 'block_lifecycle_external',
+        'methodname' => 'update_auto_freezing_preferences',
+        'classpath' => 'blocks/lifecycle/externallib.php',
+        'description' => 'Update auto context freezing preferences',
+        'ajax' => true,
+        'type' => 'write',
+        'loginrequired' => true
+    ),
+    'block_lifecycle_get_scheduled_freeze_date' => array(
+        'classname' => 'block_lifecycle_external',
+        'methodname' => 'get_scheduled_freeze_date',
+        'classpath' => 'blocks/lifecycle/externallib.php',
+        'description' => 'Get scheduled freeze date',
+        'ajax' => true,
+        'type' => 'read',
+        'loginrequired' => true
+    ),
+);
+
+
