@@ -5,8 +5,167 @@
     color: white;
     font-weight: bold;
     padding: 5px 0 5px 0;
+    margin-bottom: 10px;
 }
 
 .block_lifecycle div.clc_info.current {
     background-color: orange;
+}
+
+.block_lifecycle div.lifecycle {
+    padding: 5px 0 5px 0;
+}
+
+div.lifecycle .delayfreezedate-input {
+    width: 100%;
+}
+
+div.lifecycle .delayfreezedate {
+    padding-top: 5px;
+}
+
+div.lifecycle #scheduled-freeze-date-container {
+    margin-bottom: 10px;
+}
+
+div.lifecycle .override-freeze-date-button {
+    display: inline-block;
+    margin-bottom: 10px;
+    text-decoration: underline;
+}
+
+div.lifecycle .override-freeze-date-button.active button,
+div.lifecycle .override-freeze-date-button:hover button {
+    border-radius: 5px;
+    background-color: #0a6e84;
+    border-color: #0a6e84;
+    color: white;
+}
+
+div.lifecycle .override-freeze-date-button button {
+    border-radius: 5px;
+    background-color: #0a4b84;
+    color: white;
+    border-color: #0a4b84;
+}
+
+div.lifecycle .scheduled-freeze-date {
+    color: darkred;
+    font-weight: bold;
+}
+
+div.lifecycle .text-info {
+    margin-top: 0;
+}
+
+div.lifecycle .automatic-read-only-settings {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+/*The below CSS code were copied from Bootstrap to make the checkbox looks like toggle button.*/
+div.lifecycle .form-check {
+    display: block;
+    min-height: 1.5rem;
+    padding-left: 1.5rem;
+    margin-bottom: 0.125rem;
+}
+div.lifecycle .form-check div.lifecycle .form-check-input {
+    float: left;
+    margin-left: -1.5em;
+}
+
+div.lifecycle .form-check-reverse {
+    padding-right: 1.5em;
+    padding-left: 0;
+    text-align: right;
+}
+div.lifecycle .form-check-reverse div.lifecycle .form-check-input {
+    float: right;
+    margin-right: -1.5em;
+    margin-left: 0;
+}
+
+div.lifecycle .form-check-input {
+    width: 1em;
+    height: 1em;
+    margin-top: 0.25em;
+    vertical-align: top;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+}
+div.lifecycle .form-check-input[type=checkbox] {
+    border-radius: 0.25em;
+}
+div.lifecycle .form-check-input:active {
+    filter: brightness(90%);
+}
+div.lifecycle .form-check-input:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+div.lifecycle .form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+div.lifecycle .form-check-input:checked[type=checkbox] {
+    background-image: url("/blocks/lifecycle/assets/svg/1.svg");
+}
+div.lifecycle .form-check-input[type=checkbox]:indeterminate {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    background-image: url("/blocks/lifecycle/assets/svg/2.svg");
+}
+div.lifecycle .form-check-input:disabled {
+    pointer-events: none;
+    filter: none;
+    opacity: 0.5;
+}
+div.lifecycle .form-check-input[disabled] ~ .form-check-label,
+.form-check-input:disabled ~ .form-check-label {
+    cursor: default;
+    opacity: 0.5;
+}
+
+div.lifecycle .form-switch {
+    padding-left: 2.5em;
+}
+div.lifecycle .form-switch .form-check-input {
+    width: 2em;
+    margin-left: -2.5em;
+    background-image: url("/blocks/lifecycle/assets/svg/3.svg");
+    background-position: left center;
+    border-radius: 2em;
+    transition: background-position 0.15s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    div.lifecycle .form-switch .form-check-input {
+        transition: none;
+    }
+}
+div.lifecycle .form-switch .form-check-input:focus {
+    background-image: url("/blocks/lifecycle/assets/svg/4.svg ");
+}
+div.lifecycle .form-switch .form-check-input:checked {
+    background-position: right center;
+    background-image: url("/blocks/lifecycle/assets/svg/5.svg");
+}
+div.lifecycle .form-switch.form-check-reverse {
+    padding-right: 2.5em;
+    padding-left: 0;
+}
+div.lifecycle .form-switch.form-check-reverse .form-check-input {
+    margin-right: -2.5em;
+    margin-left: 0;
 }

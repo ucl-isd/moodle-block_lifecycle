@@ -25,7 +25,14 @@
 
 $string['pluginname'] = 'Lifecycle';
 $string['error:dateformat'] = 'Date must be in format YYYY-MM-DD';
+$string['error:cannotgetscheduledfreezedate'] = 'Cannot get scheduled freeze date.';
+$string['error:updatepreferencessuccess'] = 'Auto read only settings updated successfully.';
+$string['error:updatepreferencesfailed'] = 'Failed to update read only settings.';
 $string['generalsettings'] = 'General Settings';
+$string['help:togglefreezing'] = 'Automatic Read Only Setting';
+$string['help:togglefreezing_help'] = 'Enable Automatic Read Only.';
+$string['help:delayfreezedate'] = 'override the automatic freeze date';
+$string['help:delayfreezedate_help'] = 'To override the automatic freeze date, please enter a date below.';
 $string['lifecycle:addinstance'] = 'Add lifecycle block';
 $string['lifecycle:myaddinstance'] = 'Add my lifecycle block';
 $string['lifecycle:overridecontextfreeze'] = 'Override default course context freezing settings';
@@ -40,4 +47,5 @@ $string['settings:latesummerassessment:end:desc'] = 'End date of {$a} late summe
 $string['settings:weeksdelay'] = 'Weeks Delay';
 $string['settings:weeksdelay:desc'] = 'The number of weeks after course end date to delay context freezing';
 $string['task:freezecontext'] = 'Task to freeze course context';
+
 

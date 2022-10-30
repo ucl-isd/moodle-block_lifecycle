@@ -28,24 +28,83 @@ class block_lifecycle_renderer extends plugin_renderer_base {
     /**
      * Returns the content html for the block.
      *
+     * @param int $courseid
      * @return string
+     * @throws coding_exception|dml_exception
      */
-    public function fetch_block_content(): string {
+    public function fetch_block_content(int $courseid): string {
+        // Check if the course is frozen. If yes, disable inputs.
+        $disabled = manager::is_course_frozen($courseid) ? 'disabled' : '';
+
+        // Get auto context freezing preferences.
+        $togglefreezing = 'checked';
+        $delayfreezedate = '';
+        $preferences = manager::get_auto_context_freezing_preferences($courseid);
+        if ($preferences) {
+            // Course excluded. Turn off context freezing.
+            if ($preferences->freezeexcluded == 1) {
+                $togglefreezing = '';
+            }
+            if ($preferences->freezedate > 0) {
+                $delayfreezedate = date('Y-m-d', $preferences->freezedate);
+            }
+        }
+
+        // Create disable freezing button help icon.
+        $helpicontogglefreezing = new help_icon('help:togglefreezing', 'block_lifecycle');
+        $helpicontogglefreezinghtml = $this->output->render($helpicontogglefreezing);
+
+        // Toggle freezing button.
         $content = html_writer::start_div('lifecycle');
-        $content .= html_writer::div(manager::get_context_freezing_data());
+
+        // Scheduled freeze date.
+        $content .= html_writer::div(
+            '<h6>This course will be made automatically Read Only on: </h6>'.
+            '<div class="scheduled-freeze-date" id="scheduled-freeze-date"></div>',
+            '', array('id' => 'scheduled-freeze-date-container'));
+
+        $content .= html_writer::div('<button>Automatic Read Only Settings</button>',
+            'override-freeze-date-button', array('id' => 'override-freeze-date-button'));
+        $content .= html_writer::start_div('automatic-read-only-settings', array('id' => 'automatic-read-only-settings'));
+        $content .= html_writer::div(
+            '<label>Enable:</label>'. $helpicontogglefreezinghtml .
+            '<div class="form-check form-switch">'.
+            '<input class="form-check-input" type="checkbox" role="switch" id="togglefreezebutton" '.
+            $togglefreezing . ' ' . $disabled . '>'.
+            '</div>', 'togglefreezebutton'
+        );
+
+        // Create delay freeze date help icon.
+        $helpicondelayfreezedate = new help_icon('help:delayfreezedate', 'block_lifecycle');
+        $helpicondelayfreezedatehtml = $this->output->render($helpicondelayfreezedate);
+
+        // Delay freezing date input.
+        $content .= html_writer::div(
+            '<p><label>Overrides freeze date: </label>'. $helpicondelayfreezedatehtml .
+            '<input type="date" class="delayfreezedate-input" id="delayfreezedate" value="'. $delayfreezedate .'" ' . $disabled . '>
+            </p>', 'delayfreezedate'
+        );
+
+        // Update button.
+        $content .= html_writer::div(
+            '<button id="update_auto_freezing_preferences_button" class="btn btn-primary" '. $disabled .'>Save</button>',
+            'updatebutton'
+        );
+
+        $content .= html_writer::end_div();
         $content .= html_writer::end_div();
 
         return $content;
     }
 
     /**
-     * Returns the html for clc info.
+     * Returns the html for course academic year info.
      *
      * @param int $courseid
      * @return string
      * @throws dml_exception
      */
-    public function fetch_clc_content(int $courseid) {
+    public function fetch_clc_content(int $courseid): string {
         $content = '';
         if ($info = manager::get_course_lifecycle_info($courseid)) {
             $content = html_writer::start_div('clc_info ' . $info['class']);

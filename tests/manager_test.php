@@ -33,6 +33,7 @@ class manager_test extends \advanced_testcase {
     private $field2;
 
     protected function setUp(): void {
+        global $DB;
         parent::setUp();
 
         $this->resetAfterTest();
@@ -46,6 +47,40 @@ class manager_test extends \advanced_testcase {
         $this->course1 = $dg->create_course(['customfield_course_year' => '2020']);
         $this->course2 = $dg->create_course(['customfield_course_year' => '2021']);
         $this->course3 = $dg->create_course(['customfield_course_year' => '2022']);
+        $this->courseshouldbefrozen = $dg->create_course(
+            ['customfield_course_year' => '2021', 'startdate' => 1630450800, 'enddate' => 1656543600]
+        );
+        $this->coursewithoutacademicyear = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600]);
+        $this->coursewithfutureenddate = $dg->create_course(['startdate' => 1598914800, 'enddate' => strtotime('+ 1 month')]);
+        $this->coursewithoutenddate = $dg->create_course(
+            ['customfield_course_year' => '2020', 'startdate' => 1598914800, 'enddate' => 0]
+        );
+
+        // Create roles.
+        $this->teacherroleid = $dg->create_role(
+            array('shortname' => 'test_teacher',
+                'name' => 'test_teacher',
+                'description' => 'test teacher role',
+                'archetype' => 'editingteacher'));
+
+        $this->studentroleid = $dg->create_role(
+            array('shortname' => 'test_student',
+                'name' => 'test_student',
+                'description' => 'student role',
+                'archetype' => 'student'));
+
+        // Create users.
+        $this->user1 = $dg->create_user();
+        $this->user2 = $dg->create_user();
+
+        // Create block_lifecyce record for $this->courseshouldbefrozen.
+        $this->preferences = new \stdClass();
+        $this->preferences->courseid = $this->courseshouldbefrozen->id;
+        $this->preferences->freezeexcluded = 0;
+        $this->preferences->freezedate = strtotime('2022-10-31');
+        $this->preferences->timecreated = time();
+        $this->preferences->timemodified = time();
+        $this->preferencesrecordid = $DB->insert_record(manager::DEFAULT_TABLE, $this->preferences);
     }
 
     /**
@@ -85,19 +120,11 @@ class manager_test extends \advanced_testcase {
      * @throws \dml_exception
      */
     public function test_get_courses_for_context_freezing() {
-        set_config('weeks_delay', 1, 'block_lifecycle');
-        $dg = $this->getDataGenerator();
-
-        // Create valid course, set start date 2020-09-01, end date 2021-06-30.
-        $course1 = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
-
-        // Create invalid course with no course end date.
-        $dg->create_course(['startdate' => 1598914800, 'enddate' => 0]);
         $coursestofreeze = manager::get_courses_for_context_freezing();
 
         // Test only one valid course can be found.
         $this->assertCount(1, $coursestofreeze);
-        $this->assertEquals($course1->id, $coursestofreeze[0]->id);
+        $this->assertEquals($this->courseshouldbefrozen->id, $coursestofreeze[0]->id);
     }
 
 
@@ -158,6 +185,26 @@ class manager_test extends \advanced_testcase {
             $mockedinstance, [$course]
         );
         $this->assertTrue($check);
+
+        // Test freezing turned off by user.
+        $preferences = new \stdClass();
+        $preferences->togglefreeze = false;
+        $preferences->delayfreezedate = '';
+        manager::update_auto_freezing_preferences($course->id, $preferences);
+        $check = $reflectedmethod->invokeArgs(
+            $mockedinstance, [$course]
+        );
+        $this->assertFalse($check);
+
+        // Test with future freeze date add by user.
+        $preferences = new \stdClass();
+        $preferences->togglefreeze = true;
+        $preferences->delayfreezedate = date('Y-m-d', strtotime('+1 week'));
+        manager::update_auto_freezing_preferences($course->id, $preferences);
+        $check = $reflectedmethod->invokeArgs(
+            $mockedinstance, [$course]
+        );
+        $this->assertFalse($check);
 
         // Create course without CLC course academic year field, set start date 2020-09-01, end date 2021-06-30.
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600]);
@@ -229,14 +276,14 @@ class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Test should_show_clc_info().
+     * Test should_show_ay_label().
      *
-     * @covers \block_lifecycle\manager::should_show_clc_info()
+     * @covers \block_lifecycle\manager::should_show_ay_label()
      * @return void
      * @throws \dml_exception
      * @throws coding_exception
      */
-    public function test_should_show_clc_info() {
+    public function test_should_show_ay_label() {
         $dg = $this->getDataGenerator();
         // Create courses.
         // Start date 2021-09-01.
@@ -250,39 +297,190 @@ class manager_test extends \advanced_testcase {
             'startdate' => 1630450800, 'enddate' => 1656543600]);
 
         // Test course no end date.
-        $result = manager::should_show_clc_info($course1->id);
+        $result = manager::should_show_ay_label($course1->id);
         $this->assertFalse($result);
 
         // Test current time within course start date and end date.
-        $result = manager::should_show_clc_info($course2->id);
+        $result = manager::should_show_ay_label($course2->id);
         $this->assertFalse($result);
 
         // Test teacher can see the info.
-        $teacherroleid = $dg->create_role(
-            array('shortname' => 'test_teacher',
-                'name' => 'test_teacher',
-                'description' => 'test teacher role',
-                'archetype' => 'editingteacher'));
-        $user1 = $dg->create_user();
-        $dg->enrol_user($user1->id, $course3->id, $teacherroleid);
-        $this->setUser($user1->id);
+        $dg->enrol_user($this->user1->id, $course3->id, $this->teacherroleid);
+        $this->setUser($this->user1->id);
 
-        $result = manager::should_show_clc_info($course3->id);
+        $result = manager::should_show_ay_label($course3->id);
         $this->assertTrue($result);
 
         // Test student role cannot see the info.
-        $studentroleid = $dg->create_role(
-            array('shortname' => 'test_student',
-                'name' => 'test_student',
-                'description' => 'student role',
-                'archetype' => 'student'));
+        $dg->enrol_user($this->user2->id, $course3->id, $this->studentroleid);
+        $this->setUser($this->user2->id);
 
-        $user2 = $dg->create_user();
-        $dg->enrol_user($user2->id, $course3->id, $studentroleid);
-        $this->setUser($user2->id);
-
-        $result = manager::should_show_clc_info($course3->id);
+        $result = manager::should_show_ay_label($course3->id);
         $this->assertFalse($result);
+    }
+
+
+    /**
+     * Test should_show_auto_freezing_preferences().
+     *
+     * @covers \block_lifecycle\manager::should_show_auto_freezing_preferences()
+     * @return void
+     * @throws \dml_exception
+     * @throws coding_exception
+     */
+    public function test_should_show_auto_freezing_preferences() {
+        $dg = $this->getDataGenerator();
+
+        // Test teacher can see the block options.
+        $dg->enrol_user($this->user1->id, $this->courseshouldbefrozen->id, $this->teacherroleid);
+        $this->setUser($this->user1);
+        $result = manager::should_show_auto_freezing_preferences($this->courseshouldbefrozen->id);
+        $this->assertTrue($result);
+
+        // Test course without end date.
+        $dg->enrol_user($this->user1->id, $this->coursewithoutenddate->id, $this->teacherroleid);
+        $result = manager::should_show_auto_freezing_preferences($this->coursewithoutenddate->id);
+        $this->assertFalse($result);
+
+        // Test course end date is in the future.
+        $dg->enrol_user($this->user1->id, $this->coursewithfutureenddate->id, $this->teacherroleid);
+        $result = manager::should_show_auto_freezing_preferences($this->coursewithfutureenddate->id);
+        $this->assertFalse($result);
+
+        // Test no course without CLC academic year.
+        $dg->enrol_user($this->user1->id, $this->coursewithoutacademicyear->id, $this->teacherroleid);
+        $result = manager::should_show_auto_freezing_preferences($this->coursewithoutacademicyear->id);
+        $this->assertFalse($result);
+
+        // Test student cannot see the block options.
+        $dg->enrol_user($this->user2->id, $this->courseshouldbefrozen->id, $this->studentroleid);
+        $this->setUser($this->user2);
+        $result = manager::should_show_auto_freezing_preferences($this->courseshouldbefrozen->id);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Test Test update_auto_freezing_preferences().
+     *
+     * @covers \block_lifecycle\manager::update_auto_freezing_preferences()
+     * @return void
+     * @throws \dml_exception
+     * @throws coding_exception
+     */
+    public function test_update_auto_freezing_preferences() {
+        $dg = $this->getDataGenerator();
+        $course = $dg->create_course();
+        $preferences = new \stdClass();
+        $preferences->togglefreeze = true;
+        $preferences->delayfreezedate = '2022-11-30';
+
+        // Test insert preferences.
+        $result = manager::update_auto_freezing_preferences($course->id, $preferences);
+        $this->assertTrue($result->success);
+        $this->assertEquals(get_string('error:updatepreferencessuccess', 'block_lifecycle'), $result->message);
+
+        // Test update preferences.
+        $preferences->togglefreeze = false;
+        $preferences->delayfreezedate = '';
+        $result = manager::update_auto_freezing_preferences($course->id, $preferences);
+        $this->assertTrue($result->success);
+        $record = manager::get_auto_context_freezing_preferences($course->id);
+        $this->assertEquals('1', $record->freezeexcluded);
+        $this->assertEquals('0', $record->freezedate);
+
+        // Test exception.
+        $preferences = new \stdClass();
+        $preferences->invalidfield1 = false;
+        $preferences->invalidfield2 = '';
+        $result = manager::update_auto_freezing_preferences($course->id, $preferences);
+        $this->assertFalse($result->success);
+        $this->assertEquals(get_string('error:updatepreferencesfailed', 'block_lifecycle'), $result->message);
+    }
+
+    /**
+     * Test Test is_course_frozen().
+     *
+     * @covers \block_lifecycle\manager::is_course_frozen()
+     * @return void
+     */
+    public function test_is_course_frozen() {
+        // Test course is not frozen.
+        $result = manager::is_course_frozen($this->course1->id);
+        $this->assertFalse($result);
+
+        // Test course is frozen.
+        $context = context_course::instance($this->course1->id);
+        $context->set_locked(true);
+        $result = manager::is_course_frozen($this->course1->id);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Test get_auto_context_freezing_preferences().
+     *
+     * @covers \block_lifecycle\manager::get_auto_context_freezing_preferences()
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_get_auto_context_freezing_preferences() {
+        $result = manager::get_auto_context_freezing_preferences($this->courseshouldbefrozen->id);
+        $this->assertEquals('0', $result->freezeexcluded);
+        $this->assertEquals(strtotime('2022-10-31'), $result->freezedate);
+    }
+
+    /**
+     * Test get_scheduled_freeze_date().
+     *
+     * @covers \block_lifecycle\manager::get_scheduled_freeze_date()
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_get_scheduled_freeze_date() {
+        global $DB;
+
+        // Test course without CLC academic year, no scheduled freeze date should be returned.
+        $result = manager::get_scheduled_freeze_date($this->coursewithoutacademicyear->id);
+        $this->assertFalse($result);
+
+        // Test the scheduled freeze date is in the past.
+        $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
+        $this->assertEquals(date('d/m/Y', strtotime('+1 day')), $result);
+
+        // Test the scheduled freeze date is a future date.
+        $this->preferences->id = $this->preferencesrecordid;
+        $this->preferences->freezedate = strtotime('+1 week');
+        $DB->update_record(manager::DEFAULT_TABLE, $this->preferences);
+        $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
+        $this->assertEquals(date('d/m/Y', strtotime('+1 week')), $result);
+
+        // Test with one week delay.
+        $this->preferences->id = $this->preferencesrecordid;
+        $this->preferences->freezedate = 0;
+        $DB->update_record(manager::DEFAULT_TABLE, $this->preferences);
+        set_config('weeks_delay', 1, 'block_lifecycle');
+        set_config('late_summer_assessment_end_2021', date('Y-m-d', time()), 'block_lifecycle');
+        $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
+        $datetime = new \DateTime();
+        $datetime->modify('+7 day');
+        $this->assertEquals($datetime->format('d/m/Y'), $result);
+    }
+
+    /**
+     * Test get_weeks_delay_in_seconds().
+     *
+     * @covers \block_lifecycle\manager::get_weeks_delay_in_seconds()
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_get_weeks_delay_in_seconds() {
+        // Test week delay config is 0.
+        $result = manager::get_weeks_delay_in_seconds();
+        $this->assertEquals('0', $result);
+
+        // Test week delay config is 1.
+        set_config('weeks_delay', 1, 'block_lifecycle');
+        $result = manager::get_weeks_delay_in_seconds();
+        $this->assertEquals('604800', $result);
     }
 }
 
