@@ -1,15 +1,15 @@
 .block_lifecycle div.clc_info {
-    background-color: purple;
+    background-color: #c6b0bc;
     text-align: center;
     font-size: xx-large;
-    color: white;
+    color: #002248;
     font-weight: bold;
     padding: 5px 0 5px 0;
     margin-bottom: 10px;
 }
 
 .block_lifecycle div.clc_info.current {
-    background-color: orange;
+    background-color: #bbc592;
 }
 
 .block_lifecycle div.lifecycle {
