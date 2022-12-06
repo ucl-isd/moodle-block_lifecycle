@@ -69,6 +69,7 @@ class block_lifecycle extends block_base {
         $html = '';
         if (manager::should_show_ay_label($courseid)) {
             $html .= $renderer->fetch_clc_content($courseid);
+            $html .= $renderer->fetch_course_dates($courseid);
         }
         if (manager::should_show_auto_freezing_preferences($courseid)) {
             $html .= $renderer->fetch_block_content($courseid);

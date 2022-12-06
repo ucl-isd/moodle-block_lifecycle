@@ -12,6 +12,10 @@
     background-color: #bbc592;
 }
 
+.block_lifecycle div.course-dates {
+    margin: 5px 0;
+}
+
 .block_lifecycle div.lifecycle {
     padding: 5px 0 5px 0;
 }
