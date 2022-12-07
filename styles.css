@@ -8,12 +8,23 @@
     margin-bottom: 10px;
 }
 
+.block_lifecycle div.raad-only-notification {
+    background-color: rgb(198 176 191 / 48%);
+    text-align: center;
+    font-size: large;
+    color: rgb(0 53 72 / 87%);
+    font-weight: bold;
+    padding: 5px 0 5px 0;
+    margin-bottom: 10px;
+}
+
 .block_lifecycle div.clc_info.current {
     background-color: #bbc592;
 }
 
 .block_lifecycle div.course-dates {
     margin: 5px 0;
+    font-weight: bold;
 }
 
 .block_lifecycle div.lifecycle {

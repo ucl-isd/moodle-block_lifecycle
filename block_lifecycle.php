@@ -69,6 +69,9 @@ class block_lifecycle extends block_base {
         $html = '';
         if (manager::should_show_ay_label($courseid)) {
             $html .= $renderer->fetch_clc_content($courseid);
+            if (manager::is_course_frozen($courseid)) {
+                $html .= $renderer->fetch_course_read_only_notification();
+            }
             $html .= $renderer->fetch_course_dates($courseid);
         }
         if (manager::should_show_auto_freezing_preferences($courseid)) {

@@ -38,6 +38,7 @@ $string['lifecycle:enddate'] = 'This course\'s end date: {$a}';
 $string['lifecycle:myaddinstance'] = 'Add my lifecycle block';
 $string['lifecycle:overridecontextfreeze'] = 'Override default course context freezing settings';
 $string['lifecycle:startdate'] = 'This course\'s start date: {$a}';
+$string['lifecycle:coursereadonly'] = 'This Course is Read Only';
 $string['lifecycle:view'] = 'View lifecycle block';
 $string['privacy:metadata'] = 'The Lifecycle block does not store personal data';
 $string['settings:clcfield'] = 'CLC Field';
