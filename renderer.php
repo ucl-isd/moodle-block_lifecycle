@@ -114,4 +114,39 @@ class block_lifecycle_renderer extends plugin_renderer_base {
 
         return $content;
     }
+
+    /**
+     * Return the html for course dates.
+     *
+     * @param int $courseid
+     * @return string
+     * @throws dml_exception
+     */
+    public function fetch_course_dates(int $courseid): string {
+        $content = '';
+        if ($course = get_course($courseid)) {
+            $content = html_writer::start_div('course-dates');
+            $content .= html_writer::div(
+                    get_string('lifecycle:startdate', 'block_lifecycle', date('d/m/Y', $course->startdate)) .'<br>'.
+                    get_string('lifecycle:enddate', 'block_lifecycle', date('d/m/Y', $course->enddate))
+            );
+            $content .= html_writer::end_div();
+        }
+
+        return $content;
+    }
+
+    /**
+     * Return the html for 'read-only' notification.
+     *
+     * @return string
+     * @throws coding_exception
+     */
+    public function fetch_course_read_only_notification(): string {
+        $content = html_writer::start_div('raad-only-notification');
+        $content .= html_writer::div(get_string('lifecycle:coursereadonly', 'block_lifecycle'));
+        $content .= html_writer::end_div();
+
+        return $content;
+    }
 }
