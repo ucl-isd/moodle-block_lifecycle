@@ -41,15 +41,27 @@ class manager {
      */
     public static function get_course_lifecycle_info(int $courseid) {
         $result = '';
-        $currentcourseacademicyear = self::get_course_clc_academic_year($courseid);
-        $academicyears = self::get_potential_academic_years();
+        // Get the academic year start date config.
+        $academicyeardate = get_config('block_lifecycle', 'academic_year_start_date') ?: '08-01';
+        // Course's academic year.
+        $courseacademicyear = self::get_course_clc_academic_year($courseid);
 
-        if (!empty($currentcourseacademicyear) && !empty($academicyears)) {
+        if (!empty($courseacademicyear)) {
             $class = '';
-            if ($currentcourseacademicyear == array_keys($academicyears)[0]) {
+            // Course academic year start date.
+            $startdate = $courseacademicyear . '-' . $academicyeardate;
+            // Course academic year end date.
+            $enddate = ((int)$courseacademicyear + 1) . '-' . $academicyeardate;
+
+            // Current time within the course's academic year period.
+            if (time() > strtotime($startdate) && time() < strtotime($enddate)) {
                 $class = 'current';
+                // Current time earlier than the course's academic year start date.
+            } else if (time() < strtotime($startdate)) {
+                $class = 'future';
             }
-            $text = 'Moodle ' . $currentcourseacademicyear . '/' . ((int) substr($currentcourseacademicyear, -2) + 1);
+
+            $text = 'Moodle ' . $courseacademicyear . '/' . ((int) substr($courseacademicyear, -2) + 1);
             $result = array('class' => $class, 'text' => $text);
         }
 

@@ -69,6 +69,14 @@ if ($ADMIN->fulltree) {
         false
     ));
 
+    // Academic year start date used to calculate the current academic year period.
+    // Default '08-01', e.g. academic year for 2022 starts at 2022-08-01.
+    $settings->add(new admin_setting_configtext('block_lifecycle/academic_year_start_date',
+        get_string('settings:academicyearstartdate', 'block_lifecycle'),
+        get_string('settings:academicyearstartdate:desc', 'block_lifecycle'),
+        '08-01'
+    ));
+
     // Generate settings based on possible academic years.
     if ($potentialacademicyears = manager::get_potential_academic_years()) {
         foreach ($potentialacademicyears as $year) {
