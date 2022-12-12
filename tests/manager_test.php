@@ -452,14 +452,14 @@ class manager_test extends \advanced_testcase {
 
         // Test the scheduled freeze date is in the past.
         $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
-        $this->assertEquals(date('d/m/Y', strtotime('+1 day')), $result);
+        $this->assertEquals(date('d/m/Y', strtotime('+1 day')), $result['scheduledfreezedate']);
 
         // Test the scheduled freeze date is a future date.
         $this->preferences->id = $this->preferencesrecordid;
         $this->preferences->freezedate = strtotime('+1 week');
         $DB->update_record(manager::DEFAULT_TABLE, $this->preferences);
         $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
-        $this->assertEquals(date('d/m/Y', strtotime('+1 week')), $result);
+        $this->assertEquals(date('d/m/Y', strtotime('+1 week')), $result['scheduledfreezedate']);
 
         // Test with one week delay.
         $this->preferences->id = $this->preferencesrecordid;
@@ -470,7 +470,7 @@ class manager_test extends \advanced_testcase {
         $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
         $datetime = new \DateTime(date('Y-m-d', TIME_NOW));
         $datetime->modify('+7 day');
-        $this->assertEquals($datetime->format('d/m/Y'), $result);
+        $this->assertEquals($datetime->format('d/m/Y'), $result['scheduledfreezedate']);
     }
 
     /**

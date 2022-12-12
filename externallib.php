@@ -95,6 +95,7 @@ class block_lifecycle_external extends external_api {
             new external_single_structure(
                 array(
                     'success' => new external_value(PARAM_TEXT, 'Request result'),
+                    'defaultfreezedate' => new external_value(PARAM_TEXT, 'Default freeze date'),
                     'scheduledfreezedate' => new external_value(PARAM_TEXT, 'Scheduled freeze date'),
                     'error' => new external_value(PARAM_TEXT, 'Error message', VALUE_OPTIONAL)
                 ),
@@ -105,8 +106,10 @@ class block_lifecycle_external extends external_api {
      * Get the scheduled freeze date.
      *
      * @param int $courseid
-     * @return array URL
-     * @throws invalid_parameter_exception|coding_exception
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
      */
     public static function get_scheduled_freeze_date(int $courseid): array {
         // Parameters validation.
@@ -114,10 +117,16 @@ class block_lifecycle_external extends external_api {
             self::get_scheduled_freeze_date_parameters(),
             array('courseid' => $courseid));
 
-        $scheduledfreezedate = manager::get_scheduled_freeze_date($params['courseid']);
-        $scheduledfreezedate = !empty($scheduledfreezedate) ?
-            $scheduledfreezedate : get_string('error:cannotgetscheduledfreezedate', 'block_lifecycle');
+        $success = 'true';
+        $result = manager::get_scheduled_freeze_date($params['courseid']);
+        if (empty($result)) {
+            $success = 'false';
+            $scheduledfreezedate = get_string('error:cannotgetscheduledfreezedate', 'block_lifecycle');
+        } else {
+            $scheduledfreezedate = $result['scheduledfreezedate'];
+            $defaultfreezedate = $result['defaultfreezedate'];
+        }
 
-        return array('success' => true, 'scheduledfreezedate' => $scheduledfreezedate);
+        return ['success' => $success, 'defaultfreezedate' => $defaultfreezedate, 'scheduledfreezedate' => $scheduledfreezedate];
     }
 }

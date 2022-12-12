@@ -291,7 +291,7 @@ class manager {
      * Get scheduled freeze date.
      *
      * @param int $courseid
-     * @return false|string
+     * @return array|false
      * @throws \dml_exception
      */
     public static function get_scheduled_freeze_date(int $courseid) {
@@ -301,21 +301,27 @@ class manager {
 
         // Get configured late summer assessment end date.
         $lsaenddate = strtotime(get_config('block_lifecycle', 'late_summer_assessment_end_' . $academicyear));
-        $scheduledfreezedate = $lsaenddate + self::get_weeks_delay_in_seconds();
+        $defaultscheduledfreezedate = $lsaenddate + self::get_weeks_delay_in_seconds();
 
         // Add one day if the scheduled freeze date is already passed.
-        if ($scheduledfreezedate < time()) {
-            $scheduledfreezedate = strtotime('+1 day');
+        if ($defaultscheduledfreezedate < time()) {
+            $defaultscheduledfreezedate = strtotime('+1 day');
         }
+
+        // Set scheduled freeze date.
+        $scheduledfreezedate = $defaultscheduledfreezedate;
 
         // Compare with the delay freeze date if any.
         if ($preferences = self::get_auto_context_freezing_preferences($courseid)) {
-            if ($preferences->freezedate > $scheduledfreezedate) {
+            if ($preferences->freezedate > $defaultscheduledfreezedate) {
                 $scheduledfreezedate = $preferences->freezedate;
             }
         }
 
-        return date('d/m/Y', $scheduledfreezedate);
+        return [
+            'defaultfreezedate' => date('Y-m-d', $defaultscheduledfreezedate),
+            'scheduledfreezedate' => date('d/m/Y', $scheduledfreezedate)
+        ];
     }
 
 
