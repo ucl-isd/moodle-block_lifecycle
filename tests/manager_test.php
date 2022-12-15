@@ -19,6 +19,9 @@ namespace block_lifecycle;
 use coding_exception;
 use context_course;
 
+/** @var int TIME_NOW - set the current time to 2022-10-31 midnight*/
+const TIME_NOW = 1667174400;
+
 /**
  * Unit tests for block_lifecycle's manager class.
  *
@@ -47,6 +50,7 @@ class manager_test extends \advanced_testcase {
         $this->course1 = $dg->create_course(['customfield_course_year' => '2020']);
         $this->course2 = $dg->create_course(['customfield_course_year' => '2021']);
         $this->course3 = $dg->create_course(['customfield_course_year' => '2022']);
+        $this->course4 = $dg->create_course(['customfield_course_year' => '2023']);
         $this->courseshouldbefrozen = $dg->create_course(
             ['customfield_course_year' => '2021', 'startdate' => 1630450800, 'enddate' => 1656543600]
         );
@@ -92,7 +96,7 @@ class manager_test extends \advanced_testcase {
      */
     public function test_get_potential_academic_years() {
         $years = manager::get_potential_academic_years();
-        $this->assertCount(3, $years);
+        $this->assertCount(4, $years);
 
         // Set to use configured CLC field id.
         set_config('clcfield', $this->field2->get('id'), 'block_lifecycle');
@@ -273,6 +277,10 @@ class manager_test extends \advanced_testcase {
         // Test course academic year is current academic year.
         $result = manager::get_course_lifecycle_info($this->course3->id);
         $this->assertEquals(array('class' => 'current', 'text' => 'Moodle 2022/23'), $result);
+
+        // Test course academic year is future academic year.
+        $result = manager::get_course_lifecycle_info($this->course4->id);
+        $this->assertEquals(array('class' => 'future', 'text' => 'Moodle 2023/24'), $result);
     }
 
     /**
@@ -444,14 +452,14 @@ class manager_test extends \advanced_testcase {
 
         // Test the scheduled freeze date is in the past.
         $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
-        $this->assertEquals(date('d/m/Y', strtotime('+1 day')), $result);
+        $this->assertEquals(date('d/m/Y', strtotime('+1 day')), $result['scheduledfreezedate']);
 
         // Test the scheduled freeze date is a future date.
         $this->preferences->id = $this->preferencesrecordid;
         $this->preferences->freezedate = strtotime('+1 week');
         $DB->update_record(manager::DEFAULT_TABLE, $this->preferences);
         $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
-        $this->assertEquals(date('d/m/Y', strtotime('+1 week')), $result);
+        $this->assertEquals(date('d/m/Y', strtotime('+1 week')), $result['scheduledfreezedate']);
 
         // Test with one week delay.
         $this->preferences->id = $this->preferencesrecordid;
@@ -460,9 +468,9 @@ class manager_test extends \advanced_testcase {
         set_config('weeks_delay', 1, 'block_lifecycle');
         set_config('late_summer_assessment_end_2021', date('Y-m-d', time()), 'block_lifecycle');
         $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
-        $datetime = new \DateTime();
+        $datetime = new \DateTime(date('Y-m-d', TIME_NOW));
         $datetime->modify('+7 day');
-        $this->assertEquals($datetime->format('d/m/Y'), $result);
+        $this->assertEquals($datetime->format('d/m/Y'), $result['scheduledfreezedate']);
     }
 
     /**
@@ -483,4 +491,14 @@ class manager_test extends \advanced_testcase {
         $this->assertEquals('604800', $result);
     }
 }
+namespace block_lifecycle;
 
+/**
+ * Overrides the PHP time() function to return a static time.
+ *
+ * @package block_lifecycle
+ * @return int
+ */
+function time(): int {
+    return TIME_NOW;
+}

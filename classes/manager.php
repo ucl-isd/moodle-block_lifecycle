@@ -41,15 +41,27 @@ class manager {
      */
     public static function get_course_lifecycle_info(int $courseid) {
         $result = '';
-        $currentcourseacademicyear = self::get_course_clc_academic_year($courseid);
-        $academicyears = self::get_potential_academic_years();
+        // Get the academic year start date config.
+        $academicyeardate = get_config('block_lifecycle', 'academic_year_start_date') ?: '08-01';
+        // Course's academic year.
+        $courseacademicyear = self::get_course_clc_academic_year($courseid);
 
-        if (!empty($currentcourseacademicyear) && !empty($academicyears)) {
+        if (!empty($courseacademicyear)) {
             $class = '';
-            if ($currentcourseacademicyear == array_keys($academicyears)[0]) {
+            // Course academic year start date.
+            $startdate = $courseacademicyear . '-' . $academicyeardate;
+            // Course academic year end date.
+            $enddate = ((int)$courseacademicyear + 1) . '-' . $academicyeardate;
+
+            // Current time within the course's academic year period.
+            if (time() > strtotime($startdate) && time() < strtotime($enddate)) {
                 $class = 'current';
+                // Current time earlier than the course's academic year start date.
+            } else if (time() < strtotime($startdate)) {
+                $class = 'future';
             }
-            $text = 'Moodle ' . $currentcourseacademicyear . '/' . ((int) substr($currentcourseacademicyear, -2) + 1);
+
+            $text = 'Moodle ' . $courseacademicyear . '/' . ((int) substr($courseacademicyear, -2) + 1);
             $result = array('class' => $class, 'text' => $text);
         }
 
@@ -279,7 +291,7 @@ class manager {
      * Get scheduled freeze date.
      *
      * @param int $courseid
-     * @return false|string
+     * @return array|false
      * @throws \dml_exception
      */
     public static function get_scheduled_freeze_date(int $courseid) {
@@ -289,21 +301,27 @@ class manager {
 
         // Get configured late summer assessment end date.
         $lsaenddate = strtotime(get_config('block_lifecycle', 'late_summer_assessment_end_' . $academicyear));
-        $scheduledfreezedate = $lsaenddate + self::get_weeks_delay_in_seconds();
+        $defaultscheduledfreezedate = $lsaenddate + self::get_weeks_delay_in_seconds();
 
         // Add one day if the scheduled freeze date is already passed.
-        if ($scheduledfreezedate < time()) {
-            $scheduledfreezedate = strtotime('+1 day');
+        if ($defaultscheduledfreezedate < time()) {
+            $defaultscheduledfreezedate = strtotime('+1 day');
         }
+
+        // Set scheduled freeze date.
+        $scheduledfreezedate = $defaultscheduledfreezedate;
 
         // Compare with the delay freeze date if any.
         if ($preferences = self::get_auto_context_freezing_preferences($courseid)) {
-            if ($preferences->freezedate > $scheduledfreezedate) {
+            if ($preferences->freezedate > $defaultscheduledfreezedate) {
                 $scheduledfreezedate = $preferences->freezedate;
             }
         }
 
-        return date('d/m/Y', $scheduledfreezedate);
+        return [
+            'defaultfreezedate' => date('Y-m-d', $defaultscheduledfreezedate),
+            'scheduledfreezedate' => date('d/m/Y', $scheduledfreezedate)
+        ];
     }
 
 

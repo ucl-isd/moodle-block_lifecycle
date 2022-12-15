@@ -25,14 +25,14 @@
 
 $string['pluginname'] = 'Lifecycle';
 $string['error:dateformat'] = 'Date must be in format YYYY-MM-DD';
-$string['error:cannotgetscheduledfreezedate'] = 'Cannot get scheduled freeze date.';
+$string['error:cannotgetscheduledfreezedate'] = 'Could not get the automatically suggested date.';
 $string['error:updatepreferencessuccess'] = 'Auto read only settings updated successfully.';
 $string['error:updatepreferencesfailed'] = 'Failed to update read only settings.';
 $string['generalsettings'] = 'General Settings';
 $string['help:togglefreezing'] = 'Automatic Read Only Setting';
 $string['help:togglefreezing_help'] = 'Enable Automatic Read Only.';
 $string['help:delayfreezedate'] = 'override the automatic freeze date';
-$string['help:delayfreezedate_help'] = 'To override the automatic freeze date, please enter a date below.';
+$string['help:delayfreezedate_help'] = 'The date for a Read-Only override must be post the automatically suggested date, earlier dates may not be used.';
 $string['lifecycle:addinstance'] = 'Add lifecycle block';
 $string['lifecycle:enddate'] = 'This course\'s end date: {$a}';
 $string['lifecycle:myaddinstance'] = 'Add my lifecycle block';
@@ -41,6 +41,8 @@ $string['lifecycle:startdate'] = 'This course\'s start date: {$a}';
 $string['lifecycle:coursereadonly'] = 'This Course is Read Only';
 $string['lifecycle:view'] = 'View lifecycle block';
 $string['privacy:metadata'] = 'The Lifecycle block does not store personal data';
+$string['settings:academicyearstartdate'] = 'Academic year start date';
+$string['settings:academicyearstartdate:desc'] = 'This field is used to calculate the current academic year period and in MM-DD format';
 $string['settings:clcfield'] = 'CLC Field';
 $string['settings:clcfield:desc'] = 'The CLC course custom field used to find potential academic years';
 $string['settings:enablescheduledtask'] = 'Enable Scheduled task';

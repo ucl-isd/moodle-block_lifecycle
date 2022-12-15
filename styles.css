@@ -22,6 +22,11 @@
     background-color: #bbc592;
 }
 
+.block_lifecycle div.clc_info.future {
+    background-color: #ffca36;
+    color: #ac145a;
+}
+
 .block_lifecycle div.course-dates {
     margin: 5px 0;
     font-weight: bold;
