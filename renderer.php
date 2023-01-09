@@ -59,11 +59,13 @@ class block_lifecycle_renderer extends plugin_renderer_base {
 
         // Scheduled freeze date.
         $content .= html_writer::div(
-            '<h6>This course will be made automatically Read Only on: </h6>'.
+            '<h6>' . get_string('label:readonlydate', 'block_lifecycle') . '</h6>'.
             '<div class="scheduled-freeze-date" id="scheduled-freeze-date"></div>',
             '', array('id' => 'scheduled-freeze-date-container'));
 
-        $content .= html_writer::div('<button>Automatic Read Only Settings</button>',
+        $content .= html_writer::div('<a class="btn btn-success"><i class="fa-edit fa fa-fw"></i>' .
+            get_string('buttoneditsettings', 'block_lifecycle') .
+            '</a>',
             'override-freeze-date-button', array('id' => 'override-freeze-date-button'));
         $content .= html_writer::start_div('automatic-read-only-settings', array('id' => 'automatic-read-only-settings'));
         $content .= html_writer::div(
@@ -80,7 +82,7 @@ class block_lifecycle_renderer extends plugin_renderer_base {
 
         // Delay freezing date input.
         $content .= html_writer::div(
-            '<p><label>Overrides freeze date: </label>'. $helpicondelayfreezedatehtml .
+            '<p><label>' . get_string('label:readonlydateinput', 'block_lifecycle') . '</label>'. $helpicondelayfreezedatehtml .
             '<input type="date" class="delayfreezedate-input" id="delayfreezedate" value="'. $delayfreezedate .'" ' . $disabled . '>
             </p>', 'delayfreezedate'
         );

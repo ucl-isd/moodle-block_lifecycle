@@ -24,6 +24,7 @@
  */
 
 $string['pluginname'] = 'Lifecycle';
+$string['buttoneditsettings'] = 'Edit automatic Read-Only settings';
 $string['error:dateformat'] = 'Date must be in format YYYY-MM-DD';
 $string['error:cannotgetscheduledfreezedate'] = 'Could not get the automatically suggested date.';
 $string['error:updatepreferencessuccess'] = 'Auto read only settings updated successfully.';
@@ -31,8 +32,10 @@ $string['error:updatepreferencesfailed'] = 'Failed to update read only settings.
 $string['generalsettings'] = 'General Settings';
 $string['help:togglefreezing'] = 'Automatic Read Only Setting';
 $string['help:togglefreezing_help'] = 'Enable Automatic Read Only.';
-$string['help:delayfreezedate'] = 'override the automatic freeze date';
+$string['help:delayfreezedate'] = 'override Read-Only date';
 $string['help:delayfreezedate_help'] = 'The date for a Read-Only override must be post the automatically suggested date, earlier dates may not be used.';
+$string['label:readonlydate'] = 'This course will be made automatically Read Only on: ';
+$string['label:readonlydateinput'] = 'Overrides Read-Only date:';
 $string['lifecycle:addinstance'] = 'Add lifecycle block';
 $string['lifecycle:enddate'] = 'This course\'s end date: {$a}';
 $string['lifecycle:myaddinstance'] = 'Add my lifecycle block';
