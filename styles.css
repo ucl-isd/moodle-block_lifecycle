@@ -1,8 +1,8 @@
 .block_lifecycle div.clc_info {
-    background-color: #c6b0bc;
+    background-color: #34c6c6;
     text-align: center;
     font-size: xx-large;
-    color: #002248;
+    color: #000000;
     font-weight: bold;
     padding: 5px 0 5px 0;
     margin-bottom: 10px;
@@ -19,12 +19,13 @@
 }
 
 .block_lifecycle div.clc_info.current {
-    background-color: #bbc592;
+    background-color: #52c152;
+    color: #000000;
 }
 
 .block_lifecycle div.clc_info.future {
     background-color: #ffca36;
-    color: #ac145a;
+    color: #000000;
 }
 
 .block_lifecycle div.course-dates {
@@ -54,19 +55,18 @@ div.lifecycle .override-freeze-date-button {
     text-decoration: underline;
 }
 
-div.lifecycle .override-freeze-date-button.active button,
-div.lifecycle .override-freeze-date-button:hover button {
-    border-radius: 5px;
-    background-color: #0a6e84;
-    border-color: #0a6e84;
-    color: white;
+div.lifecycle .override-freeze-date-button.active a,
+div.lifecycle .override-freeze-date-button:hover a {
+    background-color: #006174;
 }
 
-div.lifecycle .override-freeze-date-button button {
-    border-radius: 5px;
-    background-color: #0a4b84;
-    color: white;
-    border-color: #0a4b84;
+div.lifecycle .override-freeze-date-button a {
+    background-image: none;
+    background-color: #ac145a;
+    color: #fff;
+    height: 32px;
+    line-height: 28px;
+    padding: 0 6px;
 }
 
 div.lifecycle .scheduled-freeze-date {

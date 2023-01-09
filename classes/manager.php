@@ -220,6 +220,11 @@ class manager {
             return false;
         }
 
+        // Do not show settings if course is read only.
+        if (self::is_course_frozen($courseid)) {
+            return false;
+        }
+
         return true;
     }
 
