@@ -55,7 +55,7 @@ class block_lifecycle_renderer extends plugin_renderer_base {
         $helpicontogglefreezinghtml = $this->output->render($helpicontogglefreezing);
 
         // Toggle freezing button.
-        $content = html_writer::start_div('lifecycle');
+        $content = html_writer::start_div('lifecycle', ['id' => 'lifecycle-settings-container']);
 
         // Scheduled freeze date.
         $content .= html_writer::div(

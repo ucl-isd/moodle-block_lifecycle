@@ -7,6 +7,11 @@ let defaultfreezedate = '';
 let originalfreezedatevalue = '';
 
 export const init = (courseid) => {
+    // The course is read-only. Do nothing.
+    if (!document.getElementById('lifecycle-settings-container')) {
+        return;
+    }
+
     initscheduledfreezedateblock(courseid);
     document.getElementById('update_auto_freezing_preferences_button').addEventListener('click', () => {
         updatepreferences(courseid);
@@ -43,7 +48,7 @@ function validate() {
     if (!togglefreezebutton.checked && freezedateelement.value.length > 0) {
         notification.alert(
             'Invalid selection',
-            'Please enable automatic read only or remove the overrides freeze date.',
+            'Please enable automatic read only or remove the overrides Read-Only date.',
             'OK'
         );
         return false;
