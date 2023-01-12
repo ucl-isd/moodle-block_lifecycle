@@ -37,7 +37,7 @@ if ($ADMIN->fulltree) {
 
     // The number of weeks to delay the context freezing.
     $options = array();
-    for ($i = 0; $i <= 10; $i++) {
+    for ($i = 0; $i <= 14; $i++) {
         $options[$i] = "$i";
     }
 
