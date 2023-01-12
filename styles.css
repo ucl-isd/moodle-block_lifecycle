@@ -2,7 +2,7 @@
     background-color: #34c6c6;
     text-align: center;
     font-size: xx-large;
-    color: #000000;
+    color: #000;
     font-weight: bold;
     padding: 5px 0 5px 0;
     margin-bottom: 10px;
@@ -20,12 +20,12 @@
 
 .block_lifecycle div.clc_info.current {
     background-color: #52c152;
-    color: #000000;
+    color: #000;
 }
 
 .block_lifecycle div.clc_info.future {
     background-color: #ffca36;
-    color: #000000;
+    color: #000;
 }
 
 .block_lifecycle div.course-dates {
@@ -39,6 +39,10 @@
 
 div.lifecycle .delayfreezedate-input {
     width: 100%;
+}
+
+div.lifecycle .delayfreezedate-input[disabled] {
+    background-color: #d2d5d5;
 }
 
 div.lifecycle .delayfreezedate {
