@@ -192,7 +192,7 @@ class manager_test extends \advanced_testcase {
 
         // Test freezing turned off by user.
         $preferences = new \stdClass();
-        $preferences->togglefreeze = false;
+        $preferences->togglefreeze = true;
         $preferences->delayfreezedate = '';
         manager::update_auto_freezing_preferences($course->id, $preferences);
         $check = $reflectedmethod->invokeArgs(
@@ -202,7 +202,7 @@ class manager_test extends \advanced_testcase {
 
         // Test with future freeze date add by user.
         $preferences = new \stdClass();
-        $preferences->togglefreeze = true;
+        $preferences->togglefreeze = false;
         $preferences->delayfreezedate = date('Y-m-d', strtotime('+1 week'));
         manager::update_auto_freezing_preferences($course->id, $preferences);
         $check = $reflectedmethod->invokeArgs(
@@ -379,7 +379,7 @@ class manager_test extends \advanced_testcase {
         $dg = $this->getDataGenerator();
         $course = $dg->create_course();
         $preferences = new \stdClass();
-        $preferences->togglefreeze = true;
+        $preferences->togglefreeze = false;
         $preferences->delayfreezedate = '2022-11-30';
 
         // Test insert preferences.
@@ -388,7 +388,7 @@ class manager_test extends \advanced_testcase {
         $this->assertEquals(get_string('error:updatepreferencessuccess', 'block_lifecycle'), $result->message);
 
         // Test update preferences.
-        $preferences->togglefreeze = false;
+        $preferences->togglefreeze = true;
         $preferences->delayfreezedate = '';
         $result = manager::update_auto_freezing_preferences($course->id, $preferences);
         $this->assertTrue($result->success);

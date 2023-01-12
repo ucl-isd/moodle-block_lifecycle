@@ -37,13 +37,13 @@ class block_lifecycle_renderer extends plugin_renderer_base {
         $disabled = manager::is_course_frozen($courseid) ? 'disabled' : '';
 
         // Get auto context freezing preferences.
-        $togglefreezing = 'checked';
+        $togglefreezing = '';
         $delayfreezedate = '';
         $preferences = manager::get_auto_context_freezing_preferences($courseid);
         if ($preferences) {
             // Course excluded. Turn off context freezing.
             if ($preferences->freezeexcluded == 1) {
-                $togglefreezing = '';
+                $togglefreezing = 'checked';
             }
             if ($preferences->freezedate > 0) {
                 $delayfreezedate = date('Y-m-d', $preferences->freezedate);
@@ -64,12 +64,12 @@ class block_lifecycle_renderer extends plugin_renderer_base {
             '', array('id' => 'scheduled-freeze-date-container'));
 
         $content .= html_writer::div('<a class="btn btn-success"><i class="fa-edit fa fa-fw"></i>' .
-            get_string('buttoneditsettings', 'block_lifecycle') .
+            get_string('button:editsettings', 'block_lifecycle') .
             '</a>',
             'override-freeze-date-button', array('id' => 'override-freeze-date-button'));
         $content .= html_writer::start_div('automatic-read-only-settings', array('id' => 'automatic-read-only-settings'));
         $content .= html_writer::div(
-            '<label>Enable:</label>'. $helpicontogglefreezinghtml .
+            '<label>' . get_string('button:toggleautoreadonly', 'block_lifecycle') . '</label>'. $helpicontogglefreezinghtml .
             '<div class="form-check form-switch">'.
             '<input class="form-check-input" type="checkbox" role="switch" id="togglefreezebutton" '.
             $togglefreezing . ' ' . $disabled . '>'.

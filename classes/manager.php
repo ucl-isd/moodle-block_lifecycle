@@ -243,7 +243,7 @@ class manager {
             // Create data object.
             $data = new \stdClass();
             $data->courseid = $courseid;
-            $data->freezeexcluded = ($preferences->togglefreeze) ? 0 : 1;
+            $data->freezeexcluded = ($preferences->togglefreeze) ? 1 : 0;
             $data->freezedate = strtotime($preferences->delayfreezedate);
 
             // Update record if exists, otherwise insert.
