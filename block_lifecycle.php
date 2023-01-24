@@ -59,28 +59,31 @@ class block_lifecycle extends block_base {
             return $this->content;
         }
 
-        // Load javascript.
-        $this->page->requires->js_call_amd('block_lifecycle/lifecycle', 'init', [$courseid]);
+        $context = context_course::instance($COURSE->id);
+        if (has_capability("block/lifecycle:view", $context)) {
+            // Load javascript.
+            $this->page->requires->js_call_amd('block_lifecycle/lifecycle', 'init', [$courseid]);
 
-        $this->content = new stdClass();
-        $this->content->footer = '';
-        $renderer = $this->page->get_renderer('block_lifecycle');
+            $this->content = new stdClass();
+            $this->content->footer = '';
+            $renderer = $this->page->get_renderer('block_lifecycle');
 
-        $html = '';
-        if (manager::should_show_ay_label($courseid)) {
-            $html .= $renderer->fetch_clc_content($courseid);
-            if (manager::is_course_frozen($courseid)) {
-                $html .= $renderer->fetch_course_read_only_notification();
+            $html = '';
+            if (manager::should_show_ay_label($courseid)) {
+                $html .= $renderer->fetch_clc_content($courseid);
+                if (manager::is_course_frozen($courseid)) {
+                    $html .= $renderer->fetch_course_read_only_notification();
+                }
+                $html .= $renderer->fetch_course_dates($courseid);
             }
-            $html .= $renderer->fetch_course_dates($courseid);
-        }
-        if (manager::should_show_auto_freezing_preferences($courseid)) {
-            $html .= $renderer->fetch_block_content($courseid);
-        }
+            if (manager::should_show_auto_freezing_preferences($courseid)) {
+                $html .= $renderer->fetch_block_content($courseid);
+            }
 
-        $this->content->text = $html;
+            $this->content->text = $html;
 
-        return $this->content;
+            return $this->content;
+        }
     }
 
     /**
