@@ -59,7 +59,7 @@ class block_lifecycle extends block_base {
             return $this->content;
         }
 
-        $context = context_course::instance($COURSE->id);
+        $context = context_course::instance($courseid);
         if (has_capability("block/lifecycle:view", $context)) {
             // Load javascript.
             $this->page->requires->js_call_amd('block_lifecycle/lifecycle', 'init', [$courseid]);
