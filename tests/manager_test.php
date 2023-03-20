@@ -490,6 +490,67 @@ class manager_test extends \advanced_testcase {
         $result = manager::get_weeks_delay_in_seconds();
         $this->assertEquals('604800', $result);
     }
+
+    /**
+     * Test get_furthest_date().
+     *
+     * @covers \block_lifecycle\manager::get_furthest_date()
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function test_get_furthest_date() {
+        $mockedinstance = $this->getMockBuilder(manager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $reflectedmethod = new \ReflectionMethod(
+            manager::class,
+            'get_furthest_date'
+        );
+        $reflectedmethod->setAccessible(true);
+
+        // Check course without academic year.
+        $furthestdate = $reflectedmethod->invokeArgs(
+            $mockedinstance, [$this->coursewithoutacademicyear->id]
+        );
+
+        $this->assertFalse($furthestdate);
+
+        // Check course without end date.
+        $furthestdate = $reflectedmethod->invokeArgs(
+            $mockedinstance, [$this->coursewithoutenddate->id]
+        );
+
+        $this->assertFalse($furthestdate);
+
+        // Set default timezone.
+        date_default_timezone_set('Europe/London');
+
+        // Set LSA end date.
+        set_config('late_summer_assessment_end_2020', '2021-11-30', 'block_lifecycle');
+        // Set weeks delay.
+        set_config('weeks_delay', 1, 'block_lifecycle');
+
+        $dg = $this->getDataGenerator();
+        // Create course, set start date 2020-09-01, end date 2021-06-30.
+        $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
+
+        $furthestdate = $reflectedmethod->invokeArgs(
+            $mockedinstance, [$course->id]
+        );
+
+        // Result equal to LSA end date plus weeks delay, 1 week in this case.
+        $this->assertEquals(1638835200, $furthestdate);
+
+        // Create course with course end date further than LSA end date, set start date 2020-09-01, end date 2022-02-28.
+        $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1646006400, 'customfield_course_year' => '2020']);
+        $furthestdate = $reflectedmethod->invokeArgs(
+            $mockedinstance, [$course->id]
+        );
+
+        // Result equal to course end date plus weeks delay, 1 week in this case.
+        $this->assertEquals(1646611200, $furthestdate);
+    }
 }
 namespace block_lifecycle;
 

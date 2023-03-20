@@ -300,13 +300,10 @@ class manager {
      * @throws \dml_exception
      */
     public static function get_scheduled_freeze_date(int $courseid) {
-        if (!$academicyear = self::get_course_clc_academic_year($courseid)) {
+        // No furthest date can be determined.
+        if (!$defaultscheduledfreezedate = self::get_furthest_date($courseid)) {
             return false;
         }
-
-        // Get configured late summer assessment end date.
-        $lsaenddate = strtotime(get_config('block_lifecycle', 'late_summer_assessment_end_' . $academicyear));
-        $defaultscheduledfreezedate = $lsaenddate + self::get_weeks_delay_in_seconds();
 
         // Add one day if the scheduled freeze date is already passed.
         if ($defaultscheduledfreezedate < time()) {
@@ -350,6 +347,37 @@ class manager {
     }
 
     /**
+     * Get the furthest date among LSA end date and course end date, plus weeks delay.
+     *
+     * @param int $courseid Course id.
+     * @return false|int Unix timestamp or false if cannot be determined.
+     * @throws \dml_exception
+     */
+    private static function get_furthest_date(int $courseid) {
+        // No course academic year found.
+        if (!$academicyear = self::get_course_clc_academic_year($courseid)) {
+            return false;
+        }
+
+        // Get course object.
+        $course = get_course($courseid);
+
+        // The course has no end date.
+        if (empty($course->enddate)) {
+            return false;
+        }
+
+        // Get configured late summer assessment end date.
+        $lsaenddate = strtotime(get_config('block_lifecycle', 'late_summer_assessment_end_' . $academicyear));
+
+        // Get the furthest date of LSA end date and course end date.
+        $furthestdate = $lsaenddate > $course->enddate ? $lsaenddate : $course->enddate;
+
+        // Return furthest date plus weeks delay.
+        return $furthestdate + self::get_weeks_delay_in_seconds();
+    }
+
+    /**
      * Check course is eligible for context freezing.
      *
      * @param \stdClass $course
@@ -362,11 +390,13 @@ class manager {
             return false;
         }
 
-        // Get configured late summer assessment end date.
-        $lsaenddate = strtotime(get_config('block_lifecycle', 'late_summer_assessment_end_' . $academicyear));
+        // No default read-only date determined.
+        if (!$furthestdate = self::get_furthest_date($course->id)) {
+            return false;
+        }
 
-        // The LSA end date must be in the past.
-        if ($lsaenddate > time()) {
+        // The default read-only date must be in the past.
+        if ($furthestdate > time()) {
             return false;
         }
 

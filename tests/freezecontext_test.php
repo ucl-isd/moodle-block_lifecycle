@@ -41,6 +41,7 @@ class freezecontext_test extends \advanced_testcase {
         set_config('weeks_delay', 0, 'block_lifecycle');
         set_config('late_summer_assessment_end_2020', '2021-11-30', 'block_lifecycle');
 
+        // Start date: 2020-09-01, end date: 2021-06-30.
         $this->course = $dg->create_course(
             ['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
     }
