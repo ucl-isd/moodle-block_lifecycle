@@ -30,6 +30,7 @@ $string['error:dateformat'] = 'Date must be in format YYYY-MM-DD';
 $string['error:cannotgetscheduledfreezedate'] = 'Could not get the automatically suggested date.';
 $string['error:updatepreferencessuccess'] = 'Auto read only settings updated successfully.';
 $string['error:updatepreferencesfailed'] = 'Failed to update read only settings.';
+$string['error:courseisnotreadonly'] = 'This course is not Read Only. No need to unfreeze.';
 $string['generalsettings'] = 'General Settings';
 $string['help:togglefreezing'] = 'Disable Automatic Read-Only';
 $string['help:togglefreezing_help'] = 'Disable Automatic Read-Only.';
@@ -56,5 +57,8 @@ $string['settings:latesummerassessment:end:desc'] = 'End date of {$a} late summe
 $string['settings:weeksdelay'] = 'Weeks Delay';
 $string['settings:weeksdelay:desc'] = 'The number of weeks after course end date to delay context freezing';
 $string['task:freezecontext'] = 'Task to freeze course context';
+$string['button:unfreezecoursecontext'] = 'Unfreeze course';
+$string['lifecycle:unfreezecoursecontext'] = 'Unfreeze course context';
+
 
 
