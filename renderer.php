@@ -151,4 +151,22 @@ class block_lifecycle_renderer extends plugin_renderer_base {
 
         return $content;
     }
+
+    /**
+     * Return the html for 'Unfreeze button'.
+     *
+     * @param int $courseid
+     * @return string
+     * @throws coding_exception
+     */
+    public function show_unfreeze_button(int $courseid): string {
+        $context = context_course::instance($courseid);
+        $freezeurl = new moodle_url('/admin/lock.php', ['id' => $context->id]);
+        return html_writer::div(
+            '<a href="' . $freezeurl .' " class="btn btn-primary">' .
+            get_string('button:unfreezecoursecontext', 'block_lifecycle') .
+            '</a>'
+        );
+
+    }
 }

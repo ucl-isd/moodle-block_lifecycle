@@ -79,6 +79,11 @@ class block_lifecycle extends block_base {
             if (manager::should_show_auto_freezing_preferences($courseid)) {
                 $html .= $renderer->fetch_block_content($courseid);
             }
+            if (manager::is_course_frozen($courseid)) {
+                if (has_capability("moodle/site:managecontextlocks", $context)) {
+                    $html .= $renderer->show_unfreeze_button($courseid);
+                }
+            }
 
             $this->content->text = $html;
 
