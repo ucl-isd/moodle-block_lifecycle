@@ -62,16 +62,16 @@ class manager_test extends \advanced_testcase {
 
         // Create roles.
         $this->teacherroleid = $dg->create_role(
-            array('shortname' => 'test_teacher',
+            ['shortname' => 'test_teacher',
                 'name' => 'test_teacher',
                 'description' => 'test teacher role',
-                'archetype' => 'editingteacher'));
+                'archetype' => 'editingteacher']);
 
         $this->studentroleid = $dg->create_role(
-            array('shortname' => 'test_student',
+            ['shortname' => 'test_student',
                 'name' => 'test_student',
                 'description' => 'student role',
-                'archetype' => 'student'));
+                'archetype' => 'student']);
 
         // Create users.
         $this->user1 = $dg->create_user();
@@ -272,15 +272,15 @@ class manager_test extends \advanced_testcase {
     public function test_get_course_lifecycle_info() {
         // Test course academic year is 2020.
         $result = manager::get_course_lifecycle_info($this->course1->id);
-        $this->assertEquals(array('class' => '', 'text' => 'Moodle 2020/21'), $result);
+        $this->assertEquals(['class' => '', 'text' => 'Moodle 2020/21'], $result);
 
         // Test course academic year is current academic year.
         $result = manager::get_course_lifecycle_info($this->course3->id);
-        $this->assertEquals(array('class' => 'current', 'text' => 'Moodle 2022/23'), $result);
+        $this->assertEquals(['class' => 'current', 'text' => 'Moodle 2022/23'], $result);
 
         // Test course academic year is future academic year.
         $result = manager::get_course_lifecycle_info($this->course4->id);
-        $this->assertEquals(array('class' => 'future', 'text' => 'Moodle 2023/24'), $result);
+        $this->assertEquals(['class' => 'future', 'text' => 'Moodle 2023/24'], $result);
     }
 
     /**

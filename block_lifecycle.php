@@ -38,7 +38,7 @@ class block_lifecycle extends block_base {
      * @return bool[]
      */
     public function applicable_formats() {
-        return array('site-index' => true);
+        return ['site-index' => true];
     }
 
     /**

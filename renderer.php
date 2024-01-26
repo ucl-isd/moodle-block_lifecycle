@@ -61,13 +61,13 @@ class block_lifecycle_renderer extends plugin_renderer_base {
         $content .= html_writer::div(
             '<h6>' . get_string('label:readonlydate', 'block_lifecycle') . '</h6>'.
             '<div class="scheduled-freeze-date" id="scheduled-freeze-date"></div>',
-            '', array('id' => 'scheduled-freeze-date-container'));
+            '', ['id' => 'scheduled-freeze-date-container']);
 
         $content .= html_writer::div('<a class="btn btn-success"><i class="fa-edit fa fa-fw"></i>' .
             get_string('button:editsettings', 'block_lifecycle') .
             '</a>',
-            'override-freeze-date-button', array('id' => 'override-freeze-date-button'));
-        $content .= html_writer::start_div('automatic-read-only-settings', array('id' => 'automatic-read-only-settings'));
+            'override-freeze-date-button', ['id' => 'override-freeze-date-button']);
+        $content .= html_writer::start_div('automatic-read-only-settings', ['id' => 'automatic-read-only-settings']);
         $content .= html_writer::div(
             '<label>' . get_string('button:toggleautoreadonly', 'block_lifecycle') . '</label>'. $helpicontogglefreezinghtml .
             '<div class="form-check form-switch">'.

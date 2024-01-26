@@ -36,7 +36,7 @@ if ($ADMIN->fulltree) {
     ));
 
     // The number of weeks to delay the context freezing.
-    $options = array();
+    $options = [];
     for ($i = 0; $i <= 14; $i++) {
         $options[$i] = "$i";
     }
@@ -47,7 +47,7 @@ if ($ADMIN->fulltree) {
         get_string('settings:weeksdelay:desc', 'block_lifecycle'), 0, $options));
 
     // The CLC course custom field use for getting potential academic years.
-    $options = array();
+    $options = [];
     $fields = manager::get_clc_custom_course_fields();
     if (!empty($fields)) {
         foreach ($fields as $field) {

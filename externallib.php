@@ -34,10 +34,10 @@ class block_lifecycle_external extends external_api {
      */
     public static function update_auto_freezing_preferences_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'courseid' => new external_value(PARAM_INT, 'Course ID', VALUE_REQUIRED),
                 'preferences' => new external_value(PARAM_RAW, 'Preferences', VALUE_REQUIRED),
-            )
+            ]
         );
     }
 
@@ -48,11 +48,11 @@ class block_lifecycle_external extends external_api {
     public static function update_auto_freezing_preferences_returns() {
         return
             new external_single_structure(
-                array(
+                [
                     'success' => new external_value(PARAM_TEXT, 'Request result'),
                     'message' => new external_value(PARAM_TEXT, 'Message', VALUE_OPTIONAL),
-                    'error' => new external_value(PARAM_TEXT, 'Error message', VALUE_OPTIONAL)
-                )
+                    'error' => new external_value(PARAM_TEXT, 'Error message', VALUE_OPTIONAL),
+                ]
             );
     }
 
@@ -69,7 +69,7 @@ class block_lifecycle_external extends external_api {
         // Parameters validation.
         $params = self::validate_parameters(
             self::update_auto_freezing_preferences_parameters(),
-            array('courseid' => $courseid, 'preferences' => $preferences));
+            ['courseid' => $courseid, 'preferences' => $preferences]);
 
         return (array) manager::update_auto_freezing_preferences($params['courseid'], json_decode($params['preferences']));
     }
@@ -80,9 +80,9 @@ class block_lifecycle_external extends external_api {
      */
     public static function get_scheduled_freeze_date_parameters() {
         return new external_function_parameters(
-            array(
-                'courseid' => new external_value(PARAM_INT, 'Course ID', VALUE_REQUIRED)
-            )
+            [
+                'courseid' => new external_value(PARAM_INT, 'Course ID', VALUE_REQUIRED),
+            ]
         );
     }
 
@@ -93,12 +93,12 @@ class block_lifecycle_external extends external_api {
     public static function get_scheduled_freeze_date_returns() {
         return
             new external_single_structure(
-                array(
+                [
                     'success' => new external_value(PARAM_TEXT, 'Request result'),
                     'defaultfreezedate' => new external_value(PARAM_TEXT, 'Default freeze date'),
                     'scheduledfreezedate' => new external_value(PARAM_TEXT, 'Scheduled freeze date'),
-                    'error' => new external_value(PARAM_TEXT, 'Error message', VALUE_OPTIONAL)
-                ),
+                    'error' => new external_value(PARAM_TEXT, 'Error message', VALUE_OPTIONAL),
+                ],
             );
     }
 
@@ -115,7 +115,7 @@ class block_lifecycle_external extends external_api {
         // Parameters validation.
         $params = self::validate_parameters(
             self::get_scheduled_freeze_date_parameters(),
-            array('courseid' => $courseid));
+            ['courseid' => $courseid]);
 
         $success = 'true';
         $result = manager::get_scheduled_freeze_date($params['courseid']);
