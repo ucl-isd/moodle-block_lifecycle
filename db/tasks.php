@@ -25,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = array(
-    array(
+$tasks = [
+    [
         'classname' => '\block_lifecycle\task\freezecontext',
         'blocking' => 0,
         'minute' => 0,
@@ -34,7 +34,7 @@ $tasks = array(
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
-        'disabled' => 0
-    )
-);
+        'disabled' => 0,
+    ],
+];
 

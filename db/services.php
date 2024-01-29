@@ -26,25 +26,25 @@
 defined('MOODLE_INTERNAL') || die();
 
 // We defined the web service functions to install.
-$functions = array(
-    'block_lifecycle_update_auto_freezing_preferences' => array(
+$functions = [
+    'block_lifecycle_update_auto_freezing_preferences' => [
         'classname' => 'block_lifecycle_external',
         'methodname' => 'update_auto_freezing_preferences',
         'classpath' => 'blocks/lifecycle/externallib.php',
         'description' => 'Update auto context freezing preferences',
         'ajax' => true,
         'type' => 'write',
-        'loginrequired' => true
-    ),
-    'block_lifecycle_get_scheduled_freeze_date' => array(
+        'loginrequired' => true,
+    ],
+    'block_lifecycle_get_scheduled_freeze_date' => [
         'classname' => 'block_lifecycle_external',
         'methodname' => 'get_scheduled_freeze_date',
         'classpath' => 'blocks/lifecycle/externallib.php',
         'description' => 'Get scheduled freeze date',
         'ajax' => true,
         'type' => 'read',
-        'loginrequired' => true
-    ),
-);
+        'loginrequired' => true,
+    ],
+];
 
 

@@ -62,7 +62,7 @@ class manager {
             }
 
             $text = 'Moodle ' . $courseacademicyear . '/' . ((int) substr($courseacademicyear, -2) + 1);
-            $result = array('class' => $class, 'text' => $text);
+            $result = ['class' => $class, 'text' => $text];
         }
 
         return $result;
@@ -94,7 +94,7 @@ class manager {
             WHERE cf.id = :fieldid AND cd.value <> '' AND cd.value IS NOT NULL
             ORDER BY cd.value DESC";
 
-        return $DB->get_records_sql($sql, array('fieldid' => $fieldid));
+        return $DB->get_records_sql($sql, ['fieldid' => $fieldid]);
     }
 
     /**
@@ -122,7 +122,7 @@ class manager {
     public static function get_courses_for_context_freezing(): array {
         global $DB;
 
-        $eligiblecourses = array();
+        $eligiblecourses = [];
 
         // Get weeks delay in seconds.
         $enddateextend = self::get_weeks_delay_in_seconds();
@@ -133,7 +133,7 @@ class manager {
                 AND c.enddate <> 0 AND (c.enddate + :enddateextend) < :currenttime";
 
         $potentialcourses = $DB->get_records_sql($sql,
-            array('siteid' => SITEID, 'enddateextend' => $enddateextend, 'currenttime' => time()));
+            ['siteid' => SITEID, 'enddateextend' => $enddateextend, 'currenttime' => time()]);
 
         if (!empty($potentialcourses)) {
             foreach ($potentialcourses as $course) {
@@ -322,7 +322,7 @@ class manager {
 
         return [
             'defaultfreezedate' => date('Y-m-d', $defaultscheduledfreezedate),
-            'scheduledfreezedate' => date('d/m/Y', $scheduledfreezedate)
+            'scheduledfreezedate' => date('d/m/Y', $scheduledfreezedate),
         ];
     }
 
