@@ -94,7 +94,7 @@ class manager_test extends \advanced_testcase {
      * @return void
      * @throws \dml_exception
      */
-    public function test_get_potential_academic_years() {
+    public function test_get_potential_academic_years(): void {
         $years = manager::get_potential_academic_years();
         $this->assertCount(4, $years);
 
@@ -112,7 +112,7 @@ class manager_test extends \advanced_testcase {
      * @return void
      * @throws \dml_exception
      */
-    public function test_get_clc_custom_course_fields() {
+    public function test_get_clc_custom_course_fields(): void {
         $fields = manager::get_clc_custom_course_fields();
         $this->assertCount(2, $fields);
     }
@@ -121,9 +121,10 @@ class manager_test extends \advanced_testcase {
      * Test get_courses_for_context_freezing
      *
      * @covers \block_lifecycle\manager::get_courses_for_context_freezing()
+     * @return void
      * @throws \dml_exception
      */
-    public function test_get_courses_for_context_freezing() {
+    public function test_get_courses_for_context_freezing(): void {
         $coursestofreeze = manager::get_courses_for_context_freezing();
 
         // Test only one valid course can be found.
@@ -131,14 +132,14 @@ class manager_test extends \advanced_testcase {
         $this->assertEquals($this->courseshouldbefrozen->id, $coursestofreeze[0]->id);
     }
 
-
     /**
      * Test freeze_course.
      *
      * @covers \block_lifecycle\manager::freeze_course()
-     * @throws \coding_exception
+     * @return void
+     * @throws coding_exception
      */
-    public function test_freeze_course() {
+    public function test_freeze_course(): void {
         $dg = $this->getDataGenerator();
         // Create course, set start date 2020-09-01, end date 2021-06-30.
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
@@ -164,9 +165,11 @@ class manager_test extends \advanced_testcase {
      * Test check_course_is_eligible_for_context_freezing.
      *
      * @covers \block_lifecycle\manager::check_course_is_eligible_for_context_freezing()
+     * @return void
      * @throws \ReflectionException
+     * @throws coding_exception
      */
-    public function test_check_course_is_eligible_for_context_freezing() {
+    public function test_check_course_is_eligible_for_context_freezing(): void {
         $mockedinstance = $this->getMockBuilder(manager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -233,9 +236,10 @@ class manager_test extends \advanced_testcase {
      * Test get_course_clc_academic_year.
      *
      * @covers \block_lifecycle\manager::get_course_clc_academic_year()
+     * @return void
      * @throws \ReflectionException
      */
-    public function test_get_course_clc_academic_year() {
+    public function test_get_course_clc_academic_year(): void {
         $mockedinstance = $this->getMockBuilder(manager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -269,7 +273,7 @@ class manager_test extends \advanced_testcase {
      * @return void
      * @throws \ReflectionException
      */
-    public function test_get_course_lifecycle_info() {
+    public function test_get_course_lifecycle_info(): void {
         // Test course academic year is 2020.
         $result = manager::get_course_lifecycle_info($this->course1->id);
         $this->assertEquals(['class' => '', 'text' => 'Moodle 2020/21'], $result);
@@ -291,7 +295,7 @@ class manager_test extends \advanced_testcase {
      * @throws \dml_exception
      * @throws coding_exception
      */
-    public function test_should_show_ay_label() {
+    public function test_should_show_ay_label(): void {
         $dg = $this->getDataGenerator();
         // Create courses.
         // Start date 2021-09-01.
@@ -327,7 +331,6 @@ class manager_test extends \advanced_testcase {
         $this->assertFalse($result);
     }
 
-
     /**
      * Test should_show_auto_freezing_preferences().
      *
@@ -336,7 +339,7 @@ class manager_test extends \advanced_testcase {
      * @throws \dml_exception
      * @throws coding_exception
      */
-    public function test_should_show_auto_freezing_preferences() {
+    public function test_should_show_auto_freezing_preferences(): void {
         $dg = $this->getDataGenerator();
 
         // Test teacher can see the block options.
@@ -375,7 +378,7 @@ class manager_test extends \advanced_testcase {
      * @throws \dml_exception
      * @throws coding_exception
      */
-    public function test_update_auto_freezing_preferences() {
+    public function test_update_auto_freezing_preferences(): void {
         $dg = $this->getDataGenerator();
         $course = $dg->create_course();
         $preferences = new \stdClass();
@@ -411,7 +414,7 @@ class manager_test extends \advanced_testcase {
      * @covers \block_lifecycle\manager::is_course_frozen()
      * @return void
      */
-    public function test_is_course_frozen() {
+    public function test_is_course_frozen(): void {
         // Test course is not frozen.
         $result = manager::is_course_frozen($this->course1->id);
         $this->assertFalse($result);
@@ -430,7 +433,7 @@ class manager_test extends \advanced_testcase {
      * @return void
      * @throws \dml_exception
      */
-    public function test_get_auto_context_freezing_preferences() {
+    public function test_get_auto_context_freezing_preferences(): void {
         $result = manager::get_auto_context_freezing_preferences($this->courseshouldbefrozen->id);
         $this->assertEquals('0', $result->freezeexcluded);
         $this->assertEquals(strtotime('2022-10-31'), $result->freezedate);
@@ -443,7 +446,7 @@ class manager_test extends \advanced_testcase {
      * @return void
      * @throws \dml_exception
      */
-    public function test_get_scheduled_freeze_date() {
+    public function test_get_scheduled_freeze_date(): void {
         global $DB;
 
         // Test course without CLC academic year, no scheduled freeze date should be returned.
@@ -480,7 +483,7 @@ class manager_test extends \advanced_testcase {
      * @return void
      * @throws \dml_exception
      */
-    public function test_get_weeks_delay_in_seconds() {
+    public function test_get_weeks_delay_in_seconds(): void {
         // Test week delay config is 0.
         $result = manager::get_weeks_delay_in_seconds();
         $this->assertEquals('0', $result);
@@ -498,7 +501,7 @@ class manager_test extends \advanced_testcase {
      * @return void
      * @throws \ReflectionException
      */
-    public function test_get_furthest_date() {
+    public function test_get_furthest_date(): void {
         $mockedinstance = $this->getMockBuilder(manager::class)
             ->disableOriginalConstructor()
             ->getMock();

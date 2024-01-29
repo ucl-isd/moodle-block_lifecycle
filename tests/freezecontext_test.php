@@ -52,7 +52,7 @@ class freezecontext_test extends \advanced_testcase {
      * @covers \block_lifecycle\task\freezecontext::get_name()
      * @return void
      */
-    public function test_get_name() {
+    public function test_get_name(): void {
         $task = new freezecontext();
         $this->assertEquals('Task to freeze course context', $task->get_name());
     }
@@ -61,10 +61,10 @@ class freezecontext_test extends \advanced_testcase {
      * Test execute.
      *
      * @covers \block_lifecycle\task\freezecontext::execute()
-     * @throws \coding_exception
+     * @return void
      * @throws \dml_exception
      */
-    public function test_execute() {
+    public function test_execute(): void {
         // Suppress text output during tests.
         $this->setOutputCallback(function(){
         });
