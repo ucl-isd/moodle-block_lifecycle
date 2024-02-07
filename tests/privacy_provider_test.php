@@ -39,7 +39,7 @@ class privacy_provider_test extends \advanced_testcase {
      * @return void
      * @throws \coding_exception
      */
-    public function test_get_reason() {
+    public function test_get_reason(): void {
         $reason = get_string(provider::get_reason(), 'block_lifecycle');
         $this->assertEquals('The Lifecycle block does not store personal data', $reason);
     }
