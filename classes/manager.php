@@ -74,7 +74,7 @@ class manager {
      * @return array
      * @throws \dml_exception
      */
-    public static function get_potential_academic_years() : array {
+    public static function get_potential_academic_years(): array {
         global $DB;
 
         $fieldid = null;
