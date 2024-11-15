@@ -18,9 +18,8 @@ namespace block_lifecycle;
 
 use coding_exception;
 use context_course;
-
-/** @var int TIME_NOW - set the current time to 2022-10-31 midnight*/
-const TIME_NOW = 1667174400;
+use core_customfield\field_controller;
+use moodle_exception;
 
 /**
  * Unit tests for block_lifecycle's manager class.
@@ -30,10 +29,13 @@ const TIME_NOW = 1667174400;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
 
-    /** @var \core_customfield\field_controller field2 */
-    private $field2;
+    /** @var field_controller field2 */
+    private field_controller $field2;
+
+    /** @var array years - Contains the year strings of past year, current year and future year */
+    private array $years;
 
     protected function setUp(): void {
         global $DB;
@@ -46,18 +48,31 @@ class manager_test extends \advanced_testcase {
         $this->field1 = $dg->create_custom_field(['categoryid' => $catid, 'type' => 'text', 'shortname' => 'course_year']);
         $this->field2 = $dg->create_custom_field(['categoryid' => $catid, 'type' => 'text', 'shortname' => 'new_field']);
 
+        // Put 4 years in associative array.
+        $this->years = [
+            'previous_year' => date('Y', strtotime('-2 years')),
+            'last_year' => date('Y', strtotime('-1 years')),
+            'current_year' => date('Y'),
+            'next_year' => date('Y', strtotime('+1 years')),
+        ];
+
         // Create default courses.
-        $this->course1 = $dg->create_course(['customfield_course_year' => '2020']);
-        $this->course2 = $dg->create_course(['customfield_course_year' => '2021']);
-        $this->course3 = $dg->create_course(['customfield_course_year' => '2022']);
-        $this->course4 = $dg->create_course(['customfield_course_year' => '2023']);
-        $this->courseshouldbefrozen = $dg->create_course(
-            ['customfield_course_year' => '2021', 'startdate' => 1630450800, 'enddate' => 1656543600]
-        );
-        $this->coursewithoutacademicyear = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600]);
-        $this->coursewithfutureenddate = $dg->create_course(['startdate' => 1598914800, 'enddate' => strtotime('+ 1 month')]);
+        $this->course1 = $dg->create_course(['customfield_course_year' => $this->years['previous_year']]);
+        $this->course2 = $dg->create_course(['customfield_course_year' => $this->years['last_year']]);
+        $this->course3 = $dg->create_course(['customfield_course_year' => $this->years['current_year']]);
+        $this->course4 = $dg->create_course(['customfield_course_year' => $this->years['next_year']]);
+        $this->courseshouldbefrozen = $dg->create_course([
+            'customfield_course_year' => $this->years['last_year'],
+            'startdate' => strtotime('-10 months'),
+            'enddate' => strtotime('-5 months'),
+        ]);
+        $this->coursewithoutacademicyear = $dg->create_course([
+            'startdate' => strtotime('-10 months'),
+            'enddate' => strtotime('-5 months'),
+        ]);
+        $this->coursewithfutureenddate = $dg->create_course(['startdate' => time(), 'enddate' => strtotime('+ 1 month')]);
         $this->coursewithoutenddate = $dg->create_course(
-            ['customfield_course_year' => '2020', 'startdate' => 1598914800, 'enddate' => 0]
+            ['customfield_course_year' => $this->years['previous_year'], 'startdate' => strtotime('-2 years'), 'enddate' => 0]
         );
 
         // Create roles.
@@ -81,7 +96,7 @@ class manager_test extends \advanced_testcase {
         $this->preferences = new \stdClass();
         $this->preferences->courseid = $this->courseshouldbefrozen->id;
         $this->preferences->freezeexcluded = 0;
-        $this->preferences->freezedate = strtotime('2022-10-31');
+        $this->preferences->freezedate = strtotime(date('Y-m-d') . ' -1 day');
         $this->preferences->timecreated = time();
         $this->preferences->timemodified = time();
         $this->preferencesrecordid = $DB->insert_record(manager::DEFAULT_TABLE, $this->preferences);
@@ -98,9 +113,9 @@ class manager_test extends \advanced_testcase {
         $years = manager::get_potential_academic_years();
         $this->assertCount(4, $years);
 
-        // Set to use configured CLC field id.
+        // Test no potential academic years found.
+        // Set to use a dummy field, which is not the course academic year field.
         set_config('clcfield', $this->field2->get('id'), 'block_lifecycle');
-
         $years = manager::get_potential_academic_years();
         $this->assertCount(0, $years);
     }
@@ -274,17 +289,23 @@ class manager_test extends \advanced_testcase {
      * @throws \ReflectionException
      */
     public function test_get_course_lifecycle_info(): void {
-        // Test course academic year is 2020.
+        // Test course academic year is previous academic year.
         $result = manager::get_course_lifecycle_info($this->course1->id);
-        $this->assertEquals(['class' => '', 'text' => 'Moodle 2020/21'], $result);
+        $this->assertEquals(['class' => '', 'text' => $this->get_academic_year_string($this->years['previous_year'])], $result);
 
         // Test course academic year is current academic year.
         $result = manager::get_course_lifecycle_info($this->course3->id);
-        $this->assertEquals(['class' => 'current', 'text' => 'Moodle 2022/23'], $result);
+        $this->assertEquals(
+            ['class' => 'current', 'text' => $this->get_academic_year_string($this->years['current_year'])],
+            $result
+        );
 
         // Test course academic year is future academic year.
         $result = manager::get_course_lifecycle_info($this->course4->id);
-        $this->assertEquals(['class' => 'future', 'text' => 'Moodle 2023/24'], $result);
+        $this->assertEquals(
+            ['class' => 'future', 'text' => $this->get_academic_year_string($this->years['next_year'])],
+            $result
+        );
     }
 
     /**
@@ -409,7 +430,7 @@ class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Test Test is_course_frozen().
+     * Test is_course_frozen().
      *
      * @covers \block_lifecycle\manager::is_course_frozen()
      * @return void
@@ -436,7 +457,7 @@ class manager_test extends \advanced_testcase {
     public function test_get_auto_context_freezing_preferences(): void {
         $result = manager::get_auto_context_freezing_preferences($this->courseshouldbefrozen->id);
         $this->assertEquals('0', $result->freezeexcluded);
-        $this->assertEquals(strtotime('2022-10-31'), $result->freezedate);
+        $this->assertEquals(strtotime(date('Y-m-d') . ' -1 day'), $result->freezedate);
     }
 
     /**
@@ -469,9 +490,9 @@ class manager_test extends \advanced_testcase {
         $this->preferences->freezedate = 0;
         $DB->update_record(manager::DEFAULT_TABLE, $this->preferences);
         set_config('weeks_delay', 1, 'block_lifecycle');
-        set_config('late_summer_assessment_end_2021', date('Y-m-d', time()), 'block_lifecycle');
+        set_config('late_summer_assessment_end_' . $this->years['last_year'], date('Y-m-d', time()), 'block_lifecycle');
         $result = manager::get_scheduled_freeze_date($this->courseshouldbefrozen->id);
-        $datetime = new \DateTime(date('Y-m-d', TIME_NOW));
+        $datetime = new \DateTime(date('Y-m-d'));
         $datetime->modify('+7 day');
         $this->assertEquals($datetime->format('d/m/Y'), $result['scheduledfreezedate']);
     }
@@ -554,15 +575,41 @@ class manager_test extends \advanced_testcase {
         // Result equal to course end date plus weeks delay, 1 week in this case.
         $this->assertEquals(1646611200, $furthestdate);
     }
-}
-namespace block_lifecycle;
 
-/**
- * Overrides the PHP time() function to return a static time.
- *
- * @package block_lifecycle
- * @return int
- */
-function time(): int {
-    return TIME_NOW;
+    /**
+     * Test unfreeze_course().
+     *
+     * @covers \block_lifecycle\manager::unfreeze_course()
+     * @return void
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
+    public function test_unfreeze_course(): void {
+        $this->setUser($this->user1);
+        try {
+            manager::unfreeze_course($this->courseshouldbefrozen->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('error:unfreeze_course', 'block_lifecycle'), $e->getMessage());
+        }
+
+        // Freeze course.
+        $context = context_course::instance($this->courseshouldbefrozen->id);
+        $context->set_locked(true);
+
+        // Test unlock course.
+        $this->getDataGenerator()->enrol_user($this->user1->id, $this->courseshouldbefrozen->id, $this->teacherroleid);
+        manager::unfreeze_course($this->courseshouldbefrozen->id);
+        $context = context_course::instance($this->courseshouldbefrozen->id);
+        $this->assertFalse($context->is_locked());
+    }
+
+    /**
+     * Get academic year string.
+     *
+     * @param int $year
+     * @return string
+     */
+    private function get_academic_year_string(int $year): string {
+        return 'Moodle ' . $year . '/' . substr($year + 1, -2, 2);
+    }
 }
