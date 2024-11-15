@@ -1,5 +1,6 @@
 import Ajax from 'core/ajax';
 import notification from 'core/notification';
+import {getStrings} from 'core/str';
 
 // Default auto suggested read-only date.
 let defaultfreezedate = '';
@@ -7,8 +8,10 @@ let defaultfreezedate = '';
 let originalfreezedatevalue = '';
 
 export const init = (courseid) => {
-    // The course is read-only. Do nothing.
+    // The course is read-only. Initialize the unfreeze button and return.
     if (!document.getElementById('lifecycle-settings-container')) {
+        // Initialize the unfreeze button.
+        initUnfreezeButton(courseid);
         return;
     }
 
@@ -161,4 +164,58 @@ function updatepreferences(courseid) {
             window.console.log(err);
         });
     }
+}
+
+/**
+ * Initialize the unfreeze button.
+ *
+ * @param {int} courseid
+ */
+function initUnfreezeButton(courseid) {
+    // Get the unfreeze button.
+    let unfreezeButton = document.getElementById('unfreeze-button');
+
+    // The course is not frozen. Do nothing.
+    if (!unfreezeButton) {
+        return;
+    }
+
+    let contextname = unfreezeButton.getAttribute('data-contextname');
+
+    unfreezeButton.addEventListener('click', event => {
+        event.preventDefault();
+
+        const requiredStrings = [
+            {key: 'confirmcontextunlock', component: 'admin', param: {'contextname': contextname}},
+        ];
+
+        getStrings(requiredStrings).then(([unlockBody]) => {
+            return notification.confirm('Enable editing', unlockBody, 'Confirm', null, () => {
+                    Ajax.call([{
+                        methodname: 'block_lifecycle_unfreeze_course',
+                        args: {
+                            'courseid': courseid
+                        },
+                    }])[0].done(function(response) {
+                        if (response.success) {
+                            window.location.reload();
+                        } else {
+                            notification.addNotification({
+                                message: response.message || 'An error occurred while enabling editing.',
+                                type: 'error'
+                            });
+                            // Scroll to the top of the page to show the error message.
+                            window.scrollTo({top: 0, behavior: "instant"});
+                        }
+                    }).fail(function(err) {
+                        window.console.log(err);
+                    });
+            });
+        }).catch(
+            (error) => {
+                window.console.log(error);
+                return error;
+            }
+        );
+    });
 }

@@ -34,6 +34,7 @@ $functions = [
         'description' => 'Update auto context freezing preferences',
         'ajax' => true,
         'type' => 'write',
+        'readonlysession' => true,
         'loginrequired' => true,
     ],
     'block_lifecycle_get_scheduled_freeze_date' => [
@@ -43,6 +44,15 @@ $functions = [
         'description' => 'Get scheduled freeze date',
         'ajax' => true,
         'type' => 'read',
+        'readonlysession' => true,
+        'loginrequired' => true,
+    ],
+    'block_lifecycle_unfreeze_course' => [
+        'classname' => 'block_lifecycle\external\unfreeze_course',
+        'description' => 'Unfreeze a course',
+        'ajax' => true,
+        'type' => 'write',
+        'readonlysession' => true,
         'loginrequired' => true,
     ],
 ];

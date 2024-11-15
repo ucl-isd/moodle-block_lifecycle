@@ -57,4 +57,12 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
+    'block/lifecycle:unfreezecourse' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 ];

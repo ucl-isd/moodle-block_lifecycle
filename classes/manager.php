@@ -347,6 +347,23 @@ class manager {
     }
 
     /**
+     * Unfreeze course context.
+     *
+     * @param int $courseid Course id.
+     * @return void
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public static function unfreeze_course(int $courseid): void {
+        // Check user's permission.
+        if (!has_capability('block/lifecycle:unfreezecourse', context_course::instance($courseid))) {
+            throw new \moodle_exception('error:unfreeze_course', 'block_lifecycle');
+        }
+        $context = context_course::instance($courseid);
+        $context->set_locked(false);
+    }
+
+    /**
      * Get the furthest date among LSA end date and course end date, plus weeks delay.
      *
      * @param int $courseid Course id.

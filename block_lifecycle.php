@@ -73,6 +73,11 @@ class block_lifecycle extends block_base {
                 $html .= $renderer->fetch_clc_content($courseid);
                 if (manager::is_course_frozen($courseid)) {
                     $html .= $renderer->fetch_course_read_only_notification();
+
+                    // Check if user has the capability to unfreeze the course.
+                    if (has_capability("block/lifecycle:unfreezecourse", $context)) {
+                        $html .= $renderer->fetch_unfreeze_button_html($context);
+                    }
                 }
                 $html .= $renderer->fetch_course_dates($courseid);
             }

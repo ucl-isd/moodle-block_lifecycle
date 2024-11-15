@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use block_lifecycle\manager;
+use core\context\course;
 
 /**
  * Class block_lifecycle_renderer
@@ -150,5 +151,19 @@ class block_lifecycle_renderer extends plugin_renderer_base {
         $content .= html_writer::end_div();
 
         return $content;
+    }
+
+    /**
+     * Return the html for the unfreeze button.
+     *
+     * @param course $context
+     * @return string
+     * @throws coding_exception
+     */
+    public function fetch_unfreeze_button_html(core\context\course $context): string {
+        return
+            '<a id="unfreeze-button" class="btn btn-primary w-100" data-contextname="' . $context->get_context_name() . '">' .
+                '<i class="fa-edit fa fa-fw"></i>' . get_string('label:unfreezebutton', 'block_lifecycle') .
+            '</a>';
     }
 }
