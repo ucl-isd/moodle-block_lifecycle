@@ -27,7 +27,7 @@ $string['button:editsettings'] = 'Edit automatic Read-Only settings';
 $string['button:toggleautoreadonly'] = 'Disable Automatic Read-Only';
 $string['confirm:unfreeze_button'] = '
 <p>{$a->contextname} is currently frozen. Unfreezing it will allow users to make changes. Are you sure you wish to continue?</p>
-<p class="red">Warning: it will be read-only again tomorrow unless you disable "Automatic Read-Only" in the block.</p>';
+<p class="red">Warning: this course will be made read-only again tomorrow unless you set a date override or switch off the "Automatic Read-Only" in the Lifecycle block.</p>';
 $string['error:cannotgetscheduledfreezedate'] = 'Could not get the automatically suggested date.';
 $string['error:dateformat'] = 'Date must be in format YYYY-MM-DD';
 $string['error:unfreeze_course'] = 'You do not have permission to enable editing.';
@@ -39,7 +39,7 @@ $string['help:delayfreezedate_help'] = 'The date for a Read-Only override must b
 $string['help:togglefreezing'] = 'Disable Automatic Read-Only';
 $string['help:togglefreezing_help'] = 'Disable Automatic Read-Only.';
 $string['label:readonlydate'] = 'This course will be made automatically Read Only on: ';
-$string['label:readonlydateinput'] = 'Overrides Read-Only date:';
+$string['label:readonlydateinput'] = 'Override Read-Only date:';
 $string['label:unfreezebutton'] = 'Enable editing';
 $string['lifecycle:addinstance'] = 'Add lifecycle block';
 $string['lifecycle:coursereadonly'] = 'This Course is Read Only';
