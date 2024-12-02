@@ -38,6 +38,7 @@ $string['help:delayfreezedate'] = 'override Read-Only date';
 $string['help:delayfreezedate_help'] = 'The date for a Read-Only override must be post the automatically suggested date, earlier dates may not be used.';
 $string['help:togglefreezing'] = 'Disable Automatic Read-Only';
 $string['help:togglefreezing_help'] = 'Disable Automatic Read-Only.';
+$string['label:for'] = 'for {$a}';
 $string['label:readonlydate'] = 'This course will be made automatically Read Only on: ';
 $string['label:readonlydateinput'] = 'Override Read-Only date:';
 $string['label:unfreezebutton'] = 'Enable editing';
