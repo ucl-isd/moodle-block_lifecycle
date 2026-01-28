@@ -78,10 +78,10 @@ final class manager_test extends \advanced_testcase {
     private stdClass $user2;
 
     /** @var stdClass preferences */
-    private stdClass $preferences;
+    public stdClass $preferences;
 
     /** @var int preferencesrecordid */
-    private int $preferencesrecordid;
+    public int $preferencesrecordid;
 
     protected function setUp(): void {
         global $DB;
