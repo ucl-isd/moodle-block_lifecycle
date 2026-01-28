@@ -20,6 +20,7 @@ use coding_exception;
 use context_course;
 use core_customfield\field_controller;
 use moodle_exception;
+use stdClass;
 
 /**
  * Unit tests for block_lifecycle's manager class.
@@ -31,11 +32,56 @@ use moodle_exception;
  */
 final class manager_test extends \advanced_testcase {
 
+    /** @var field_controller field1 */
+    private field_controller $field1;
+
     /** @var field_controller field2 */
     private field_controller $field2;
 
     /** @var array years - Contains the year strings of past year, current year and future year */
     private array $years;
+
+    /** @var stdClass course1 */
+    private stdClass $course1;
+
+    /** @var stdClass course1 */
+    private stdClass $course2;
+
+    /** @var stdClass course1 */
+    private stdClass $course3;
+
+    /** @var stdClass course1 */
+    private stdClass $course4;
+
+    /** @var stdClass course1 */
+    private stdClass $courseshouldbefrozen;
+
+    /** @var stdClass course1 */
+    private stdClass $coursewithoutacademicyear;
+
+    /** @var stdClass course1 */
+    private stdClass $coursewithfutureenddate;
+
+    /** @var stdClass course1 */
+    private stdClass $coursewithoutenddate;
+
+    /** @var int teacherroleid */
+    private int $teacherroleid;
+
+    /** @var int studentroleid */
+    private int $studentroleid;
+
+    /** @var stdClass user1 */
+    private stdClass $user1;
+
+    /** @var stdClass user2 */
+    private stdClass $user2;
+
+    /** @var stdClass preferences */
+    private stdClass $preferences;
+
+    /** @var int preferencesrecordid */
+    private int $preferencesrecordid;
 
     protected function setUp(): void {
         global $DB;
@@ -93,7 +139,7 @@ final class manager_test extends \advanced_testcase {
         $this->user2 = $dg->create_user();
 
         // Create block_lifecyce record for $this->courseshouldbefrozen.
-        $this->preferences = new \stdClass();
+        $this->preferences = new stdClass();
         $this->preferences->courseid = $this->courseshouldbefrozen->id;
         $this->preferences->freezeexcluded = 0;
         $this->preferences->freezedate = strtotime(date('Y-m-d') . ' -1 day');

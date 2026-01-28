@@ -18,6 +18,8 @@ namespace block_lifecycle;
 
 use block_lifecycle\task\freezecontext;
 use context_course;
+use core_customfield\field_controller;
+use stdClass;
 
 /**
  * Unit tests for block_lifecycle's freezecontext class.
@@ -28,6 +30,12 @@ use context_course;
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
 final class freezecontext_test extends \advanced_testcase {
+    /** @var field_controller field1 */
+    private field_controller $field1;
+
+    /** @var stdClass course */
+    private stdClass $course;
+
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
