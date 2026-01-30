@@ -18,6 +18,8 @@ namespace block_lifecycle;
 
 use block_lifecycle\task\freezecontext;
 use context_course;
+use core_customfield\field_controller;
+use stdClass;
 
 /**
  * Unit tests for block_lifecycle's freezecontext class.
@@ -28,8 +30,14 @@ use context_course;
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
 final class freezecontext_test extends \advanced_testcase {
-    private \stdClass $course;
-    private \core_customfield\field_controller $field1;
+    /**
+     * @var stdClass
+     */
+    private stdClass $course;
+    /**
+     * @var field_controller
+     */
+    private field_controller $field1;
 
     protected function setUp(): void {
         parent::setUp();
@@ -46,7 +54,8 @@ final class freezecontext_test extends \advanced_testcase {
 
         // Start date: 2020-09-01, end date: 2021-06-30.
         $this->course = $dg->create_course(
-            ['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
+            ['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']
+        );
     }
 
     /**
@@ -69,7 +78,7 @@ final class freezecontext_test extends \advanced_testcase {
      */
     public function test_execute(): void {
         // Suppress text output during tests.
-        $this->setOutputCallback(function(){
+        $this->setOutputCallback(function () {
         });
 
         // Test freeze context task.

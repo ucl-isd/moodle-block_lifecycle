@@ -30,7 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
     // General settings.
-    $settings->add(new admin_setting_heading('block_lifecycle_general',
+    $settings->add(new admin_setting_heading(
+        'block_lifecycle_general',
         get_string('generalsettings', 'block_lifecycle'),
         ''
     ));
@@ -44,7 +45,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect(
         'block_lifecycle/weeks_delay',
         get_string('settings:weeksdelay', 'block_lifecycle'),
-        get_string('settings:weeksdelay:desc', 'block_lifecycle'), 0, $options));
+        get_string('settings:weeksdelay:desc', 'block_lifecycle'),
+        0,
+        $options
+    ));
 
     // The CLC course custom field use for getting potential academic years.
     $options = [];
@@ -57,7 +61,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect(
         'block_lifecycle/clcfield',
         get_string('settings:clcfield', 'block_lifecycle'),
-        get_string('settings:clcfield:desc', 'block_lifecycle'), '', $options));
+        get_string('settings:clcfield:desc', 'block_lifecycle'),
+        '',
+        $options
+    ));
 
     // Setting to enable/disable the scheduled task for auto context freezing.
     $settings->add(new admin_setting_configcheckbox(
@@ -71,7 +78,8 @@ if ($ADMIN->fulltree) {
 
     // Academic year start date used to calculate the current academic year period.
     // Default '08-01', e.g. academic year for 2022 starts at 2022-08-01.
-    $settings->add(new admin_setting_configtext('block_lifecycle/academic_year_start_date',
+    $settings->add(new admin_setting_configtext(
+        'block_lifecycle/academic_year_start_date',
         get_string('settings:academicyearstartdate', 'block_lifecycle'),
         get_string('settings:academicyearstartdate:desc', 'block_lifecycle'),
         '08-01'

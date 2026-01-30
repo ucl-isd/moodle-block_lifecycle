@@ -60,21 +60,27 @@ class block_lifecycle_renderer extends plugin_renderer_base {
 
         // Scheduled freeze date.
         $content .= html_writer::div(
-            '<h6>' . get_string('label:readonlydate', 'block_lifecycle') . '</h6>'.
+            '<h6>' . get_string('label:readonlydate', 'block_lifecycle') . '</h6>' .
             '<div class="scheduled-freeze-date" id="scheduled-freeze-date"></div>',
-            '', ['id' => 'scheduled-freeze-date-container']);
+            '',
+            ['id' => 'scheduled-freeze-date-container']
+        );
 
-        $content .= html_writer::div('<a class="btn btn-success"><i class="fa-edit fa fa-fw"></i>' .
+        $content .= html_writer::div(
+            '<a class="btn btn-success"><i class="fa-edit fa fa-fw"></i>' .
             get_string('button:editsettings', 'block_lifecycle') .
             '</a>',
-            'override-freeze-date-button', ['id' => 'override-freeze-date-button']);
+            'override-freeze-date-button',
+            ['id' => 'override-freeze-date-button']
+        );
         $content .= html_writer::start_div('automatic-read-only-settings', ['id' => 'automatic-read-only-settings']);
         $content .= html_writer::div(
-            '<label>' . get_string('button:toggleautoreadonly', 'block_lifecycle') . '</label>'. $helpicontogglefreezinghtml .
-            '<div class="form-check form-switch">'.
-            '<input class="form-check-input" type="checkbox" role="switch" id="togglefreezebutton" '.
-            $togglefreezing . ' ' . $disabled . '>'.
-            '</div>', 'togglefreezebutton'
+            '<label>' . get_string('button:toggleautoreadonly', 'block_lifecycle') . '</label>' . $helpicontogglefreezinghtml .
+            '<div class="form-check form-switch">' .
+            '<input class="form-check-input" type="checkbox" role="switch" id="togglefreezebutton" ' .
+            $togglefreezing . ' ' . $disabled . '>' .
+            '</div>',
+            'togglefreezebutton'
         );
 
         // Create delay freeze date help icon.
@@ -83,14 +89,18 @@ class block_lifecycle_renderer extends plugin_renderer_base {
 
         // Delay freezing date input.
         $content .= html_writer::div(
-            '<p><label>' . get_string('label:readonlydateinput', 'block_lifecycle') . '</label>'. $helpicondelayfreezedatehtml .
-            '<input type="date" class="delayfreezedate-input" id="delayfreezedate" value="'. $delayfreezedate .'" ' . $disabled . '>
-            </p>', 'delayfreezedate'
+            '<p>'
+            . '<label>' . get_string('label:readonlydateinput', 'block_lifecycle') . '</label>'
+            . $helpicondelayfreezedatehtml
+            . '<input type="date" class="delayfreezedate-input" id="delayfreezedate" value="'
+            . $delayfreezedate . '" ' . $disabled . '>
+            </p>',
+            'delayfreezedate'
         );
 
         // Update button.
         $content .= html_writer::div(
-            '<button id="update_auto_freezing_preferences_button" class="btn btn-primary" '. $disabled .'>Save</button>',
+            '<button id="update_auto_freezing_preferences_button" class="btn btn-primary" ' . $disabled . '>Save</button>',
             'updatebutton'
         );
 
@@ -130,7 +140,7 @@ class block_lifecycle_renderer extends plugin_renderer_base {
         if ($course = get_course($courseid)) {
             $content = html_writer::start_div('course-dates');
             $content .= html_writer::div(
-                    get_string('lifecycle:startdate', 'block_lifecycle', date('d/m/Y', $course->startdate)) .'<br>'.
+                get_string('lifecycle:startdate', 'block_lifecycle', date('d/m/Y', $course->startdate)) . '<br>' .
                     get_string('lifecycle:enddate', 'block_lifecycle', date('d/m/Y', $course->enddate))
             );
             $content .= html_writer::end_div();
