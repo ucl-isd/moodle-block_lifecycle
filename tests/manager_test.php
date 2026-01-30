@@ -32,21 +32,69 @@ use moodle_exception;
 final class manager_test extends \advanced_testcase {
     /** @var array years - Contains the year strings of past year, current year and future year */
     private array $years;
+    /**
+     * @var field_controller
+     */
     private field_controller $field1;
+    /**
+     * @var field_controller
+     */
     private field_controller $field2;
+    /**
+     * @var object|\stdClass
+     */
     private object $user1;
+    /**
+     * @var object|\stdClass
+     */
     private object $user2;
+    /**
+     * @var object|\stdClass
+     */
     private object $course1;
+    /**
+     * @var object|\stdClass
+     */
     private object $course2;
+    /**
+     * @var object|\stdClass
+     */
     private object $course3;
+    /**
+     * @var object|\stdClass
+     */
     private object $course4;
+    /**
+     * @var object|\stdClass
+     */
     private object $courseshouldbefrozen;
+    /**
+     * @var object|\stdClass
+     */
     private object $coursewithoutacademicyear;
+    /**
+     * @var object|\stdClass
+     */
     private object $coursewithfutureenddate;
+    /**
+     * @var object|\stdClass
+     */
     private object $coursewithoutenddate;
+    /**
+     * @var \stdClass
+     */
     private \stdClass $preferences;
+    /**
+     * @var int|bool
+     */
     private int|bool $preferencesrecordid;
+    /**
+     * @var int
+     */
     private int $teacherroleid;
+    /**
+     * @var int
+     */
     private int $studentroleid;
 
     protected function setUp(): void {
@@ -92,13 +140,15 @@ final class manager_test extends \advanced_testcase {
             ['shortname' => 'test_teacher',
                 'name' => 'test_teacher',
                 'description' => 'test teacher role',
-                'archetype' => 'editingteacher']);
+            'archetype' => 'editingteacher']
+        );
 
         $this->studentroleid = $dg->create_role(
             ['shortname' => 'test_student',
                 'name' => 'test_student',
                 'description' => 'student role',
-                'archetype' => 'student']);
+            'archetype' => 'student']
+        );
 
         // Create users.
         $this->user1 = $dg->create_user();
@@ -216,7 +266,8 @@ final class manager_test extends \advanced_testcase {
 
         // Test valid course.
         $check = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course]
+            $mockedinstance,
+            [$course]
         );
         $this->assertTrue($check);
 
@@ -226,7 +277,8 @@ final class manager_test extends \advanced_testcase {
         $preferences->delayfreezedate = '';
         manager::update_auto_freezing_preferences($course->id, $preferences);
         $check = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course]
+            $mockedinstance,
+            [$course]
         );
         $this->assertFalse($check);
 
@@ -236,7 +288,8 @@ final class manager_test extends \advanced_testcase {
         $preferences->delayfreezedate = date('Y-m-d', strtotime('+1 week'));
         manager::update_auto_freezing_preferences($course->id, $preferences);
         $check = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course]
+            $mockedinstance,
+            [$course]
         );
         $this->assertFalse($check);
 
@@ -244,7 +297,8 @@ final class manager_test extends \advanced_testcase {
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600]);
         // Test CLC course academic year is not set.
         $check = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course]
+            $mockedinstance,
+            [$course]
         );
         $this->assertFalse($check);
 
@@ -254,7 +308,8 @@ final class manager_test extends \advanced_testcase {
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
         // Test current date hasn't passed the LSA end date.
         $check = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course]
+            $mockedinstance,
+            [$course]
         );
         $this->assertFalse($check);
     }
@@ -281,14 +336,16 @@ final class manager_test extends \advanced_testcase {
         // Create course, set start date 2020-09-01, end date 2021-06-30.
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
         $academicyear = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course->id]
+            $mockedinstance,
+            [$course->id]
         );
         $this->assertEquals('2020', $academicyear);
 
         // Create course without CLC course academic year field, set start date 2020-09-01, end date 2021-06-30.
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600]);
         $academicyear = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course->id]
+            $mockedinstance,
+            [$course->id]
         );
         $this->assertNull($academicyear);
     }
@@ -547,14 +604,16 @@ final class manager_test extends \advanced_testcase {
 
         // Check course without academic year.
         $furthestdate = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$this->coursewithoutacademicyear->id]
+            $mockedinstance,
+            [$this->coursewithoutacademicyear->id]
         );
 
         $this->assertFalse($furthestdate);
 
         // Check course without end date.
         $furthestdate = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$this->coursewithoutenddate->id]
+            $mockedinstance,
+            [$this->coursewithoutenddate->id]
         );
 
         $this->assertFalse($furthestdate);
@@ -572,7 +631,8 @@ final class manager_test extends \advanced_testcase {
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
 
         $furthestdate = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course->id]
+            $mockedinstance,
+            [$course->id]
         );
 
         // Result equal to LSA end date plus weeks delay, 1 week in this case.
@@ -581,7 +641,8 @@ final class manager_test extends \advanced_testcase {
         // Create course with course end date further than LSA end date, set start date 2020-09-01, end date 2022-02-28.
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1646006400, 'customfield_course_year' => '2020']);
         $furthestdate = $reflectedmethod->invokeArgs(
-            $mockedinstance, [$course->id]
+            $mockedinstance,
+            [$course->id]
         );
 
         // Result equal to course end date plus weeks delay, 1 week in this case.

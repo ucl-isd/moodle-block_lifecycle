@@ -69,7 +69,8 @@ class block_lifecycle_external extends external_api {
         // Parameters validation.
         $params = self::validate_parameters(
             self::update_auto_freezing_preferences_parameters(),
-            ['courseid' => $courseid, 'preferences' => $preferences]);
+            ['courseid' => $courseid, 'preferences' => $preferences]
+        );
 
         return (array) manager::update_auto_freezing_preferences($params['courseid'], json_decode($params['preferences']));
     }
@@ -115,7 +116,8 @@ class block_lifecycle_external extends external_api {
         // Parameters validation.
         $params = self::validate_parameters(
             self::get_scheduled_freeze_date_parameters(),
-            ['courseid' => $courseid]);
+            ['courseid' => $courseid]
+        );
 
         $success = 'true';
         $result = manager::get_scheduled_freeze_date($params['courseid']);

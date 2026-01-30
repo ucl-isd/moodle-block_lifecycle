@@ -27,7 +27,6 @@ use block_lifecycle\manager;
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
 class freezecontext extends \core\task\scheduled_task {
-
     /**
      * Name for this task.
      *
@@ -47,7 +46,7 @@ class freezecontext extends \core\task\scheduled_task {
                 foreach ($courses as $course) {
                     try {
                         manager::freeze_course($course->id);
-                        mtrace($course->id . '_' .$course->fullname . ' is frozen now.');
+                        mtrace($course->id . '_' . $course->fullname . ' is frozen now.');
                     } catch (\Exception $e) {
                         mtrace($e->getMessage());
                     }

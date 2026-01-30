@@ -44,7 +44,8 @@ class behat_lifecycle extends behat_base {
             'customfield_category',
             ['name' => $data['category'],
                 'component' => 'core_course',
-                'area' => 'course']);
+            'area' => 'course']
+        );
 
         if (!$category) {
             $category = (object)[

@@ -132,8 +132,10 @@ class manager {
                 WHERE c.id <> :siteid AND ctx.contextlevel = 50 AND ctx.locked = 0
                 AND c.enddate <> 0 AND (c.enddate + :enddateextend) < :currenttime";
 
-        $potentialcourses = $DB->get_records_sql($sql,
-            ['siteid' => SITEID, 'enddateextend' => $enddateextend, 'currenttime' => time()]);
+        $potentialcourses = $DB->get_records_sql(
+            $sql,
+            ['siteid' => SITEID, 'enddateextend' => $enddateextend, 'currenttime' => time()]
+        );
 
         if (!empty($potentialcourses)) {
             foreach ($potentialcourses as $course) {

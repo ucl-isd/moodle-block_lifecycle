@@ -63,5 +63,3 @@ $string['settings:latesummerassessment:end:desc'] = 'End date of {$a} late summe
 $string['settings:weeksdelay'] = 'Weeks Delay';
 $string['settings:weeksdelay:desc'] = 'The number of weeks after course end date to delay context freezing';
 $string['task:freezecontext'] = 'Task to freeze course context';
-
-

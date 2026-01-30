@@ -31,7 +31,6 @@ use admin_setting_configtext;
  * An admin setting for a date input.
  */
 class admin_setting_configdate extends admin_setting_configtext {
-
     /**
      * Validate the submitted data of the setting.
      *
@@ -60,7 +59,7 @@ class admin_setting_configdate extends admin_setting_configtext {
      * @param string $query
      * @return string
      */
-    public function output_html($data, $query=''): string {
+    public function output_html($data, $query = ''): string {
         global $OUTPUT;
 
         $default = $this->get_defaultsetting();

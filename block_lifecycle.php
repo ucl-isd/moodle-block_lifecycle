@@ -24,7 +24,6 @@ use block_lifecycle\manager;
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
 class block_lifecycle extends block_base {
-
     /**
      * Initialize the block with its title.
      */
