@@ -54,7 +54,7 @@ class manager {
             $enddate = ((int)$courseacademicyear + 1) . '-' . $academicyeardate;
 
             // Current time within the course's academic year period.
-            if (time() > strtotime($startdate) && time() < strtotime($enddate)) {
+            if (time() >= strtotime($startdate) && time() < strtotime($enddate)) {
                 $class = 'current';
                 // Current time earlier than the course's academic year start date.
             } else if (time() < strtotime($startdate)) {
