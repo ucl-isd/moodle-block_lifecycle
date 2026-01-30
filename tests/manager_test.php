@@ -20,6 +20,7 @@ use coding_exception;
 use context_course;
 use core_customfield\field_controller;
 use moodle_exception;
+use function GuzzleHttp\Psr7\str;
 
 /**
  * Unit tests for block_lifecycle's manager class.
@@ -109,11 +110,16 @@ final class manager_test extends \advanced_testcase {
         $this->field2 = $dg->create_custom_field(['categoryid' => $catid, 'type' => 'text', 'shortname' => 'new_field']);
 
         // Put 4 years in associative array.
+        $currentacademicyearstart = strtotime(date('Y') . '-' . get_config('block_lifecycle', 'academic_year_start_date'));
+        if (time() < $currentacademicyearstart) {
+            $currentacademicyearstart = strtotime("- 1 years", $currentacademicyearstart);
+        }
+
         $this->years = [
-            'previous_year' => date('Y', strtotime('-2 years')),
-            'last_year' => date('Y', strtotime('-1 years')),
-            'current_year' => date('Y'),
-            'next_year' => date('Y', strtotime('+1 years')),
+            'previous_year' => date('Y', strtotime("-2 years", $currentacademicyearstart)),
+            'last_year' => date('Y', strtotime("-1 years", $currentacademicyearstart)),
+            'current_year' => date('Y', $currentacademicyearstart),
+            'next_year' => date('Y', strtotime("+1 years", $currentacademicyearstart)),
         ];
 
         // Create default courses.
