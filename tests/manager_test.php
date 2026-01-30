@@ -30,12 +30,24 @@ use moodle_exception;
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
 final class manager_test extends \advanced_testcase {
-
-    /** @var field_controller field2 */
-    private field_controller $field2;
-
     /** @var array years - Contains the year strings of past year, current year and future year */
     private array $years;
+    private field_controller $field1;
+    private field_controller $field2;
+    private object $user1;
+    private object $user2;
+    private object $course1;
+    private object $course2;
+    private object $course3;
+    private object $course4;
+    private object $courseshouldbefrozen;
+    private object $coursewithoutacademicyear;
+    private object $coursewithfutureenddate;
+    private object $coursewithoutenddate;
+    private \stdClass $preferences;
+    private int|bool $preferencesrecordid;
+    private int $teacherroleid;
+    private int $studentroleid;
 
     protected function setUp(): void {
         global $DB;
