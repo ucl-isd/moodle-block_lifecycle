@@ -28,6 +28,9 @@ use context_course;
  * @author     Alex Yeung <k.yeung@ucl.ac.uk>
  */
 final class freezecontext_test extends \advanced_testcase {
+    private \stdClass $course;
+    private \core_customfield\field_controller $field1;
+
     protected function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
