@@ -43,6 +43,9 @@ if (!$course = get_course($courseid)) {
 // Make sure user is authenticated.
 require_login($course);
 
+// Validate the session key to prevent CSRF.
+require_sesskey();
+
 // Unfreeze the course.
 try {
     manager::unfreeze_course($courseid);

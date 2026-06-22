@@ -61,7 +61,7 @@ class manager {
                 $class = 'future';
             }
 
-            $text = 'Moodle ' . $courseacademicyear . '/' . ((int) substr($courseacademicyear, -2) + 1);
+            $text = 'Moodle ' . s($courseacademicyear) . '/' . ((int) substr($courseacademicyear, -2) + 1);
             $result = ['class' => $class, 'text' => $text];
         }
 
@@ -237,11 +237,23 @@ class manager {
      * @param \stdClass $preferences
      * @return \stdClass
      * @throws \coding_exception
+     * @throws \moodle_exception
      */
     public static function update_auto_freezing_preferences(int $courseid, \stdClass $preferences): \stdClass {
         global $DB;
+
+        // Check user's permission.
+        if (!has_capability('block/lifecycle:overridecontextfreeze', context_course::instance($courseid))) {
+            throw new \moodle_exception('error:overridecontextfreeze', 'block_lifecycle');
+        }
+
         $result = new \stdClass();
         try {
+            // Make sure the required preference fields are provided.
+            if (!isset($preferences->togglefreeze) || !isset($preferences->delayfreezedate)) {
+                throw new \coding_exception(get_string('error:missingpreferences', 'block_lifecycle'));
+            }
+
             // Create data object.
             $data = new \stdClass();
             $data->courseid = $courseid;
@@ -264,6 +276,7 @@ class manager {
                 $result->message = get_string('error:updatepreferencesfailed', 'block_lifecycle');
             }
         } catch (\Exception $exception) {
+            debugging($exception->getMessage(), DEBUG_DEVELOPER);
             $result->success = false;
             $result->message = get_string('error:updatepreferencesfailed', 'block_lifecycle');
         }
@@ -300,8 +313,14 @@ class manager {
      * @param int $courseid
      * @return array|false
      * @throws \dml_exception
+     * @throws \moodle_exception
      */
     public static function get_scheduled_freeze_date(int $courseid) {
+        // Check user's permission.
+        if (!has_capability('block/lifecycle:view', context_course::instance($courseid))) {
+            throw new \moodle_exception('error:view', 'block_lifecycle');
+        }
+
         // No furthest date can be determined.
         if (!$defaultscheduledfreezedate = self::get_furthest_date($courseid)) {
             return false;

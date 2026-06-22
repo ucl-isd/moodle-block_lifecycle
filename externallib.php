@@ -17,6 +17,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 use block_lifecycle\manager;
+use context_course;
+
 require_once($CFG->libdir . "/externallib.php");
 
 /**
@@ -72,6 +74,11 @@ class block_lifecycle_external extends external_api {
             ['courseid' => $courseid, 'preferences' => $preferences]
         );
 
+        // Validate the course context and check the capability.
+        $context = context_course::instance($params['courseid']);
+        self::validate_context($context);
+        require_capability('block/lifecycle:overridecontextfreeze', $context);
+
         return (array) manager::update_auto_freezing_preferences($params['courseid'], json_decode($params['preferences']));
     }
 
@@ -118,6 +125,11 @@ class block_lifecycle_external extends external_api {
             self::get_scheduled_freeze_date_parameters(),
             ['courseid' => $courseid]
         );
+
+        // Validate the course context and check the capability.
+        $context = context_course::instance($params['courseid']);
+        self::validate_context($context);
+        require_capability('block/lifecycle:view', $context);
 
         $success = 'true';
         $result = manager::get_scheduled_freeze_date($params['courseid']);

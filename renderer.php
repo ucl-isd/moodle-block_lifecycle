@@ -171,7 +171,7 @@ class block_lifecycle_renderer extends plugin_renderer_base {
      * @throws coding_exception|moodle_exception
      */
     public function fetch_unfreeze_button_html(context_course $context): string {
-        $url = new moodle_url('/blocks/lifecycle/unfreeze.php', ['id' => $context->instanceid]);
+        $url = new moodle_url('/blocks/lifecycle/unfreeze.php', ['id' => $context->instanceid, 'sesskey' => sesskey()]);
         return $this->output->render_from_template(
             'block_lifecycle/unfreeze_button',
             [
