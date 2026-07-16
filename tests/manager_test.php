@@ -270,6 +270,10 @@ final class manager_test extends \advanced_testcase {
         // Create course, set start date 2020-09-01, end date 2021-06-30.
         $course = $dg->create_course(['startdate' => 1598914800, 'enddate' => 1625007600, 'customfield_course_year' => '2020']);
 
+        // Set the current user as an editing teacher who can override context freezing.
+        $dg->enrol_user($this->user1->id, $course->id, $this->teacherroleid);
+        $this->setUser($this->user1);
+
         // Test valid course.
         $check = $reflectedmethod->invokeArgs(
             $mockedinstance,
@@ -477,6 +481,11 @@ final class manager_test extends \advanced_testcase {
     public function test_update_auto_freezing_preferences(): void {
         $dg = $this->getDataGenerator();
         $course = $dg->create_course();
+
+        // Set the current user as an editing teacher who can override context freezing.
+        $dg->enrol_user($this->user1->id, $course->id, $this->teacherroleid);
+        $this->setUser($this->user1);
+
         $preferences = new \stdClass();
         $preferences->togglefreeze = false;
         $preferences->delayfreezedate = '2022-11-30';
@@ -500,6 +509,8 @@ final class manager_test extends \advanced_testcase {
         $preferences->invalidfield1 = false;
         $preferences->invalidfield2 = '';
         $result = manager::update_auto_freezing_preferences($course->id, $preferences);
+        // The caught exception is reported via debugging() before returning the failure result.
+        $this->assertDebuggingCalled();
         $this->assertFalse($result->success);
         $this->assertEquals(get_string('error:updatepreferencesfailed', 'block_lifecycle'), $result->message);
     }
@@ -544,6 +555,13 @@ final class manager_test extends \advanced_testcase {
      */
     public function test_get_scheduled_freeze_date(): void {
         global $DB;
+
+        $dg = $this->getDataGenerator();
+
+        // Set the current user as an editing teacher who can view the scheduled freeze date.
+        $dg->enrol_user($this->user1->id, $this->coursewithoutacademicyear->id, $this->teacherroleid);
+        $dg->enrol_user($this->user1->id, $this->courseshouldbefrozen->id, $this->teacherroleid);
+        $this->setUser($this->user1);
 
         // Test course without CLC academic year, no scheduled freeze date should be returned.
         $result = manager::get_scheduled_freeze_date($this->coursewithoutacademicyear->id);

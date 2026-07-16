@@ -77,9 +77,8 @@ final class freezecontext_test extends \advanced_testcase {
      * @throws \dml_exception
      */
     public function test_execute(): void {
-        // Suppress text output during tests.
-        $this->setOutputCallback(function () {
-        });
+        // The task reports frozen courses via mtrace(); expect and assert on that output.
+        $this->expectOutputRegex('/is frozen now/');
 
         // Test freeze context task.
         $context = context_course::instance($this->course->id);
