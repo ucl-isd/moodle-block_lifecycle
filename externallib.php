@@ -17,7 +17,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 use block_lifecycle\manager;
-use context_course;
 
 require_once($CFG->libdir . "/externallib.php");
 
